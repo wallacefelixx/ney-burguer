@@ -1,26 +1,33 @@
 import React, { useState } from 'react';
+// 1. CORREÇÃO DO IMPORT (Caminho correto)
 import { useCart } from '../contexts/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
 import './Carrinho.css';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
-// CÓDIGO PIX DE EXEMPLO (Substitua pelo código real "Copia e Cola" do banco do Ney)
 const CODIGO_PIX_COPIA_COLA = "00020126580014br.gov.bcb.pix0136123e4567-e89b-12d3-a456-426614174000520400005303986540410.005802BR5913Ney Burguer6008Divinopolis62070503***6304E2CA";
 
 const Carrinho = () => {
-  const { carrinho, total, removerDoCarrinho, limparCarrinho } = useCart();
+  // 2. CORREÇÃO DAS VARIÁVEIS (Inglês do Context -> Português da tela)
+  const { cartItems, cartTotal, removeFromCart, clearCart } = useCart();
+  
+  // Para facilitar, vamos apelidar as variáveis aqui dentro:
+  const carrinho = cartItems;
+  const total = cartTotal;
+  const limparCarrinho = clearCart;
+  // A remoção precisa receber ID e OBS agora
+  const removerDoCarrinho = (id, obs) => removeFromCart(id, obs); 
+
   const [nomeCliente, setNomeCliente] = useState('');
   const [endereco, setEndereco] = useState('');
   const [formaPagamento, setFormaPagamento] = useState('dinheiro');
-  const [pixCopiado, setPixCopiado] = useState(false); // Novo estado para feedback do botão
+  const [pixCopiado, setPixCopiado] = useState(false);
   const navigate = useNavigate();
 
-  // --- FUNÇÃO PARA COPIAR O PIX ---
   const handleCopyPix = () => {
     navigator.clipboard.writeText(CODIGO_PIX_COPIA_COLA);
     setPixCopiado(true);
-    // Volta o texto do botão ao normal depois de 3 segundos
     setTimeout(() => setPixCopiado(false), 3000);
   };
 
@@ -34,7 +41,7 @@ const Carrinho = () => {
     const pedido = {
       cliente: nomeCliente,
       endereco: endereco,
-      itens: carrinho,
+      itens: carrinho, // O Firebase vai receber a lista correta
       total: total,
       pagamento: formaPagamento,
       status: 'Pendente',
@@ -45,7 +52,7 @@ const Carrinho = () => {
 
     try {
       await addDoc(collection(db, "pedidos"), pedido);
-      limparCarrinho();
+      limparCarrinho(); // Agora essa função existe!
       navigate('/pedidos');
     } catch (error) {
       console.error("Erro ao enviar:", error);
@@ -66,17 +73,18 @@ const Carrinho = () => {
     <div className="carrinho-container">
       <h2>Finalizar Pedido</h2>
       
-      {/* ... Lista de itens (igual ao anterior) ... */}
       <div className="lista-itens">
-        {carrinho.map(item => (
-          <div key={item.id} className="item-carrinho">
+        {carrinho.map((item, index) => (
+          // Usando index como chave extra para garantir unicidade
+          <div key={`${item.id}-${index}`} className="item-carrinho">
              <div>
                 <h4>{item.quantidade}x {item.nome}</h4>
                 {item.obs && <p className="obs">Obs: {item.obs}</p>}
              </div>
              <div className="item-actions">
                 <p>R$ {(item.preco * item.quantidade).toFixed(2)}</p>
-                <button onClick={() => removerDoCarrinho(item.id)} className="btn-remover">Remover</button>
+                {/* Ajuste importante: Passar ID e OBS para remover corretamente */}
+                <button onClick={() => removerDoCarrinho(item.id, item.obs)} className="btn-remover">Remover</button>
              </div>
           </div>
         ))}
@@ -94,7 +102,6 @@ const Carrinho = () => {
         </div>
         <div className="form-grupo">
           <label>Endereço Completo:</label>
-          {/* AUMENTAMOS A CAIXA AQUI COM rows="4" */}
           <textarea 
             value={endereco} 
             onChange={e => setEndereco(e.target.value)} 
@@ -111,13 +118,11 @@ const Carrinho = () => {
           </select>
         </div>
 
-        {/* --- NOVA SEÇÃO DO PIX (Só aparece se selecionar PIX) --- */}
         {formaPagamento === 'pix' && (
           <div className="pix-area animate-fade-in">
             <h4>Pagamento via PIX</h4>
             <p className="pix-instrucao">Escaneie o QR Code ou use o "Copia e Cola" abaixo:</p>
             
-            {/* Placeholder do QR Code (Troque a imagem src pela real depois) */}
             <div className="qr-code-box">
               <img 
                 src="https://placehold.co/200x200/FBBF24/1a1a1a?text=QR+Code+PIX\n(Exemplo)" 
@@ -125,10 +130,8 @@ const Carrinho = () => {
               />
             </div>
 
-            {/* Área do Copia e Cola */}
             <div className="copia-cola-box">
               <input type="text" value={CODIGO_PIX_COPIA_COLA} readOnly />
-              {/* Botão com feedback visual */}
               <button 
                 type="button" 
                 onClick={handleCopyPix}
@@ -140,7 +143,6 @@ const Carrinho = () => {
             <p className="pix-aviso"><small>Após pagar, clique em "Confirmar Pedido" abaixo.</small></p>
           </div>
         )}
-        {/* --------------------------------------------------------- */}
 
         <button className="btn-finalizar" onClick={finalizarPedido}>
           Confirmar Pedido {formaPagamento === 'pix' && 'e Enviar Comprovante'}
