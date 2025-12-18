@@ -1,0 +1,137 @@
+/* src/pages/Detalhes.css */
+
+.detalhes-container {
+  background-color: #fff;
+  min-height: 100vh;
+  padding-bottom: 100px; /* IMPORTANTE: Espaço para a barra fixa não cobrir o texto */
+  position: relative;
+}
+
+/* Botão Voltar (flutuante sobre a foto) */
+.btn-voltar {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* Foto do Topo */
+.detalhes-img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+/* Conteúdo (Texto) */
+.detalhes-info {
+  padding: 20px;
+}
+
+.detalhes-titulo {
+  font-family: 'Arial Black', sans-serif; /* Fonte gordinha */
+  font-size: 24px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  line-height: 1;
+}
+
+.detalhes-desc {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.detalhes-preco {
+  font-size: 28px;
+  font-weight: 900;
+  color: #d4a017; /* O Dourado/Amarelo do preço */
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+}
+
+/* Área de Observação */
+.label-obs {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.input-obs {
+  width: 100%;
+  height: 100px;
+  background-color: #e0e0e0; /* Fundo cinza igual do print */
+  border: none;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 14px;
+  resize: none;
+}
+
+/* Barra Inferior Fixa */
+.barra-fixa {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #e0e0e0; /* Fundo cinza da barra */
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  z-index: 50;
+}
+
+/* Contador (- 1 +) */
+.contador {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.btn-qtd {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: #5c5c68; /* Cinza escuro do botão */
+  color: white;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.numero-qtd {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* Botão Adicionar (Amarelo) */
+.btn-adicionar {
+  background-color: #FBBF24; /* Amarelo Ney Burguer */
+  color: #000;
+  border: 1px solid #000;
+  padding: 0 20px;
+  height: 50px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 16px;
+  flex: 1; /* Ocupa o resto do espaço */
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

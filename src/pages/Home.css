@@ -1,0 +1,180 @@
+/* src/pages/Home.css */
+
+/* --- HEADER (Topo) --- */
+.header {
+  background-color: #1a1a1a; /* Fundo preto (igual ao logo do print) */
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.topo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+}
+
+.logo-texto {
+  font-family: 'Arial Black', sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  color: #FBBF24; /* Amarelo Ney Burguer */
+  text-transform: uppercase;
+  letter-spacing: -1px;
+}
+
+.status-loja {
+  background-color: #25D366; /* Verde online */
+  color: #fff;
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(37, 211, 102, 0.4);
+}
+
+/* --- CATEGORIAS (Scroll) --- */
+.categorias-container {
+  background-color: #fff;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.categorias-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 0 15px;
+  scrollbar-width: none; /* Esconde barra no Firefox */
+}
+
+.categorias-scroll::-webkit-scrollbar {
+  display: none; /* Esconde barra no Chrome */
+}
+
+.btn-categoria {
+  background-color: #f3f4f6;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #555;
+  transition: all 0.2s;
+}
+
+.btn-categoria.ativa {
+  background-color: #FBBF24;
+  color: #000;
+  box-shadow: 0 2px 5px rgba(251, 191, 36, 0.4);
+  transform: scale(1.05);
+}
+
+/* --- BANNER --- */
+.banner-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.banner-promocao {
+  background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+  color: #FBBF24;
+  text-align: center;
+  padding: 25px;
+  font-weight: 900;
+  font-size: 24px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  letter-spacing: 1px;
+  border: 2px solid #FBBF24;
+}
+
+/* --- LISTA DE PRODUTOS --- */
+.lista-produtos {
+  padding: 0 15px 100px 15px; /* Espaço extra embaixo pro carrinho */
+  background-color: #f9f9f9;
+}
+
+.titulo-secao {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 10px 0 15px 0;
+  color: #333;
+  border-left: 5px solid #FBBF24; /* Detalhe amarelo na esquerda */
+  padding-left: 10px;
+  text-transform: uppercase;
+}
+
+/* Card do Produto */
+.produto-card {
+  background: white;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: transform 0.1s;
+  border: 1px solid #eee;
+}
+
+.produto-card:active {
+  transform: scale(0.98);
+}
+
+.produto-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.produto-nome {
+  font-weight: 800;
+  font-size: 16px;
+  margin-bottom: 4px;
+  color: #1a1a1a;
+  text-transform: uppercase;
+}
+
+.produto-desc {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limita a 2 linhas e põe ... */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.produto-preco {
+  font-weight: 900;
+  color: #d4a017; /* Cor dourada do print */
+  font-size: 16px;
+  margin-top: auto; /* Empurra o preço pra baixo */
+}
+
+.produto-img {
+  width: 100px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.btn-meus-pedidos {
+  background-color: #333;
+  color: #FBBF24;
+  border: 1px solid #FBBF24;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+}
