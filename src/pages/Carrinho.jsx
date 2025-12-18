@@ -1,47 +1,63 @@
 import React, { useState } from 'react';
-// 1. CORREÇÃO DO IMPORT (Caminho correto)
 import { useCart } from '../contexts/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
 import './Carrinho.css';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
-const CODIGO_PIX_COPIA_COLA = "00020126580014br.gov.bcb.pix0136123e4567-e89b-12d3-a456-426614174000520400005303986540410.005802BR5913Ney Burguer6008Divinopolis62070503***6304E2CA";
+const CODIGO_PIX = "00020126580014br.gov.bcb.pix0136123e4567-e89b-12d3-a456-426614174000520400005303986540410.005802BR5913Ney Burguer6008Divinopolis62070503***6304E2CA";
 
 const Carrinho = () => {
-  // 2. CORREÇÃO DAS VARIÁVEIS (Inglês do Context -> Português da tela)
   const { cartItems, cartTotal, removeFromCart, clearCart } = useCart();
-  
-  // Para facilitar, vamos apelidar as variáveis aqui dentro:
+
+  // Adaptador (Inglês -> Português)
   const carrinho = cartItems;
   const total = cartTotal;
-  const limparCarrinho = clearCart;
-  // A remoção precisa receber ID e OBS agora
-  const removerDoCarrinho = (id, obs) => removeFromCart(id, obs); 
 
+  // Estados do Formulário
   const [nomeCliente, setNomeCliente] = useState('');
+  const [telefone, setTelefone] = useState(''); // NOVO CAMPO
   const [endereco, setEndereco] = useState('');
   const [formaPagamento, setFormaPagamento] = useState('dinheiro');
   const [pixCopiado, setPixCopiado] = useState(false);
+  
   const navigate = useNavigate();
 
+  // Formata o telefone automaticamente (11) 99999-9999
+  const handleTelefoneChange = (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // Remove tudo que não é número
+    value = value.replace(/^(\d{2})(\d)/g, "($1) $2"); // Coloca parênteses no DDD
+    value = value.replace(/(\d)(\d{4})$/, "$1-$2"); // Coloca hífen
+    setTelefone(value);
+  };
+
   const handleCopyPix = () => {
-    navigator.clipboard.writeText(CODIGO_PIX_COPIA_COLA);
-    setPixCopiado(true);
-    setTimeout(() => setPixCopiado(false), 3000);
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(CODIGO_PIX);
+      setPixCopiado(true);
+      setTimeout(() => setPixCopiado(false), 3000);
+    }
   };
 
   const finalizarPedido = async () => {
     if (carrinho.length === 0) return;
-    if (!nomeCliente || !endereco) {
-      alert("Por favor, preencha nome e endereço!");
+    
+    // Validação mais rígida: Agora exige telefone
+    if (!nomeCliente.trim() || !endereco.trim() || !telefone.trim()) {
+      alert("Por favor, preencha Nome, Telefone e Endereço para a entrega.");
       return;
     }
 
-    const pedido = {
+    if (telefone.length < 14) {
+      alert("Por favor, digite um telefone válido com DDD.");
+      return;
+    }
+
+    const payloadPedido = {
       cliente: nomeCliente,
+      telefone: telefone, // ENVIA PARA O BANCO
       endereco: endereco,
-      itens: carrinho, // O Firebase vai receber a lista correta
+      itens: carrinho,
       total: total,
       pagamento: formaPagamento,
       status: 'Pendente',
@@ -51,11 +67,11 @@ const Carrinho = () => {
     };
 
     try {
-      await addDoc(collection(db, "pedidos"), pedido);
-      limparCarrinho(); // Agora essa função existe!
+      await addDoc(collection(db, "pedidos"), payloadPedido);
+      clearCart();
       navigate('/pedidos');
     } catch (error) {
-      console.error("Erro ao enviar:", error);
+      console.error("Falha ao registrar pedido:", error);
       alert("Erro ao enviar pedido. Tente novamente.");
     }
   };
@@ -64,88 +80,103 @@ const Carrinho = () => {
     return (
       <div className="carrinho-vazio">
         <h2>Seu carrinho está vazio 😢</h2>
-        <Link to="/">Voltar para o cardápio</Link>
+        <Link to="/" className="btn-voltar">Voltar para o cardápio</Link>
       </div>
     );
   }
 
   return (
     <div className="carrinho-container">
-      <h2>Finalizar Pedido</h2>
+      <h2 className="titulo-secao">Finalizar Pedido</h2>
       
       <div className="lista-itens">
         {carrinho.map((item, index) => (
-          // Usando index como chave extra para garantir unicidade
           <div key={`${item.id}-${index}`} className="item-carrinho">
-             <div>
+             <div className="info-item">
                 <h4>{item.quantidade}x {item.nome}</h4>
-                {item.obs && <p className="obs">Obs: {item.obs}</p>}
+                {item.obs && <p className="obs-item">Obs: {item.obs}</p>}
              </div>
-             <div className="item-actions">
-                <p>R$ {(item.preco * item.quantidade).toFixed(2)}</p>
-                {/* Ajuste importante: Passar ID e OBS para remover corretamente */}
-                <button onClick={() => removerDoCarrinho(item.id, item.obs)} className="btn-remover">Remover</button>
+             <div className="actions-item">
+                <span className="preco-item">R$ {(item.preco * item.quantidade).toFixed(2)}</span>
+                <button onClick={() => removeFromCart(item.id, item.obs)} className="btn-remover">Remover</button>
              </div>
           </div>
         ))}
       </div>
 
       <div className="total-pedido">
-        <h3>Total: R$ {total.toFixed(2)}</h3>
+        <h3>Total Geral: R$ {total.toFixed(2)}</h3>
       </div>
 
       <div className="formulario-entrega">
-        <h3>Dados para Entrega</h3>
-        <div className="form-grupo">
-          <label>Seu Nome:</label>
-          <input type="text" value={nomeCliente} onChange={e => setNomeCliente(e.target.value)} placeholder="Ex: João Silva" />
+        <h3>Dados de Entrega</h3>
+        
+        {/* GRUPO DE DADOS DO CLIENTE */}
+        <div className="form-row">
+            <div className="form-grupo">
+            <label htmlFor="nome">Seu Nome:</label>
+            <input 
+                id="nome"
+                type="text" 
+                value={nomeCliente} 
+                onChange={e => setNomeCliente(e.target.value)} 
+                placeholder="Ex: João Silva" 
+            />
+            </div>
+
+            <div className="form-grupo">
+            <label htmlFor="telefone">WhatsApp / Telefone:</label>
+            <input 
+                id="telefone"
+                type="tel" 
+                value={telefone} 
+                onChange={handleTelefoneChange} 
+                maxLength="15"
+                placeholder="(37) 99999-9999" 
+            />
+            </div>
         </div>
+
         <div className="form-grupo">
-          <label>Endereço Completo:</label>
+          <label htmlFor="endereco">Endereço Completo:</label>
           <textarea 
+            id="endereco"
             value={endereco} 
             onChange={e => setEndereco(e.target.value)} 
-            placeholder="Rua, Número, Bairro e Referência..."
+            placeholder="Rua, Número, Bairro e Ponto de Referência..."
             rows="4" 
           />
         </div>
+
         <div className="form-grupo">
-          <label>Forma de Pagamento:</label>
-          <select value={formaPagamento} onChange={e => setFormaPagamento(e.target.value)}>
+          <label htmlFor="pagamento">Forma de Pagamento:</label>
+          <select id="pagamento" value={formaPagamento} onChange={e => setFormaPagamento(e.target.value)}>
             <option value="dinheiro">Dinheiro (Levar troco)</option>
-            <option value="cartao">Cartão (Maquininha na entrega)</option>
-            <option value="pix">PIX (Pagar agora)</option>
+            <option value="cartao">Cartão (Maquininha)</option>
+            <option value="pix">PIX (Pagamento imediato)</option>
           </select>
         </div>
 
         {formaPagamento === 'pix' && (
           <div className="pix-area animate-fade-in">
-            <h4>Pagamento via PIX</h4>
-            <p className="pix-instrucao">Escaneie o QR Code ou use o "Copia e Cola" abaixo:</p>
+            <div className="pix-header"><h4>Pagamento via PIX</h4></div>
+            <p className="pix-instrucao">Use o Copia e Cola abaixo:</p>
             
-            <div className="qr-code-box">
-              <img 
-                src="https://placehold.co/200x200/FBBF24/1a1a1a?text=QR+Code+PIX\n(Exemplo)" 
-                alt="QR Code PIX" 
-              />
+            <div className="qr-code-wrapper">
+                <img src="https://placehold.co/150x150/FBBF24/1a1a1a?text=QR+Code" alt="QR" className="qr-code-img" />
             </div>
 
-            <div className="copia-cola-box">
-              <input type="text" value={CODIGO_PIX_COPIA_COLA} readOnly />
-              <button 
-                type="button" 
-                onClick={handleCopyPix}
-                className={pixCopiado ? 'btn-copiar copiado' : 'btn-copiar'}
-              >
-                {pixCopiado ? 'Copiado! ✅' : 'Copiar Código'}
+            <div className="input-group-copy">
+              <input type="text" value={CODIGO_PIX} readOnly disabled />
+              <button type="button" onClick={handleCopyPix} className={`btn-copy ${pixCopiado ? 'success' : ''}`}>
+                {pixCopiado ? 'Copiado!' : 'Copiar'}
               </button>
             </div>
-            <p className="pix-aviso"><small>Após pagar, clique em "Confirmar Pedido" abaixo.</small></p>
           </div>
         )}
 
         <button className="btn-finalizar" onClick={finalizarPedido}>
-          Confirmar Pedido {formaPagamento === 'pix' && 'e Enviar Comprovante'}
+          Confirmar Pedido
         </button>
       </div>
     </div>

@@ -310,3 +310,34 @@
   border-radius: 5px;
   cursor: pointer;
 }
+
+/* Etiquetas de Fidelidade */
+.badge-cliente {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-left: 10px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Cliente Novo (Verde) */
+.badge-novo {
+  background-color: #059669; /* Verde esmeralda */
+  color: white;
+  border: 1px solid #047857;
+}
+
+/* Cliente Fiel (Dourado/Laranja) */
+.badge-fiel {
+  background-color: #FBBF24; /* O Amarelo da marca */
+  color: #1a1a1a;
+  border: 1px solid #d97706;
+}
+
+.badge-loading {
+  font-size: 0.8rem;
+  color: #666;
+  margin-left: 5px;
+}

@@ -233,3 +233,20 @@
     height: 100px;
   }
 }
+
+/* Layout responsivo para Nome e Telefone */
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.form-row .form-grupo {
+  flex: 1; /* Faz os dois ocuparem o mesmo tamanho */
+}
+
+@media (max-width: 480px) {
+  .form-row {
+    flex-direction: column; /* No celular, um embaixo do outro */
+    gap: 0;
+  }
+}

@@ -1,54 +1,68 @@
 import React, { useState, useEffect } from 'react';
 import './Cozinha.css';
 import { db } from '../firebase';
-import { collection, query, orderBy, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, updateDoc, where, getCountFromServer } from 'firebase/firestore';
 
+// --- COMPONENTE DO BADGE (Fica aqui fora mesmo) ---
+const BadgeFidelidade = ({ telefone }) => {
+  const [totalPedidos, setTotalPedidos] = useState(null);
+
+  useEffect(() => {
+    async function contar() {
+      if (!telefone) return;
+      const q = query(collection(db, "pedidos"), where("telefone", "==", telefone));
+      try {
+        const snapshot = await getCountFromServer(q);
+        setTotalPedidos(snapshot.data().count);
+      } catch (error) {
+        console.error("Erro ao contar pedidos:", error);
+        setTotalPedidos(0);
+      }
+    }
+    contar();
+  }, [telefone]);
+
+  if (totalPedidos === null) return <span className="badge-loading">...</span>;
+
+  const estilo = totalPedidos === 1 ? 'badge-novo' : 'badge-fiel';
+  const texto = totalPedidos === 1 ? '🌟 1º Pedido' : `🏆 ${totalPedidos}º Pedido`;
+
+  return <span className={`badge-cliente ${estilo}`}>{texto}</span>;
+};
+
+// --- COMPONENTE PRINCIPAL ---
 const Cozinha = () => {
-  // --- ESTADOS DE LOGIN ---
   const [estaLogado, setEstaLogado] = useState(false);
   const [senhaInput, setSenhaInput] = useState('');
   const [erroSenha, setErroSenha] = useState('');
 
-  // --- ESTADOS DA COZINHA ---
   const [pedidos, setPedidos] = useState([]);
   const [abaAtiva, setAbaAtiva] = useState('pendentes');
   const [filtroPeriodo, setFiltroPeriodo] = useState('hoje');
   const [dataSelecionada, setDataSelecionada] = useState(new Date().toISOString().split('T')[0]);
 
-  // 1. Verifica se já logou antes (ao abrir a tela)
   useEffect(() => {
     const loginSalvo = localStorage.getItem('cozinhaLogada');
-    if (loginSalvo === 'sim') {
-      setEstaLogado(true);
-    }
+    if (loginSalvo === 'sim') setEstaLogado(true);
   }, []);
 
-  // 2. Carrega os pedidos SOMENTE se estiver logado
   useEffect(() => {
-    if (!estaLogado) return; // Se não tá logado, nem conecta no Firebase
-
+    if (!estaLogado) return;
     const q = query(collection(db, "pedidos"), orderBy("data_timestamp", "desc"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const listaPedidos = [];
-      querySnapshot.forEach((doc) => {
-        listaPedidos.push({ id: doc.id, ...doc.data() });
-      });
-      setPedidos(listaPedidos);
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setPedidos(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
-
     return () => unsubscribe();
   }, [estaLogado]);
 
-  // --- FUNÇÃO DE LOGIN ---
   const handleLogin = (e) => {
     e.preventDefault();
-    // A SENHA DEFINIDA É "ney123" (Você pode mudar aqui)
     if (senhaInput === 'ney123') {
       setEstaLogado(true);
-      localStorage.setItem('cozinhaLogada', 'sim'); // Salva para não pedir de novo
+      localStorage.setItem('cozinhaLogada', 'sim');
       setErroSenha('');
     } else {
-      setErroSenha('Senha incorreta! Tente novamente.');
+      setErroSenha('Senha incorreta!');
     }
   };
 
@@ -57,10 +71,10 @@ const Cozinha = () => {
     localStorage.removeItem('cozinhaLogada');
   };
 
-  // ... (Funções de concluir, imprimir e filtrar continuam iguais) ...
   const concluirPedido = async (id) => {
-    const pedidoRef = doc(db, "pedidos", id);
-    await updateDoc(pedidoRef, { status: "Concluido" });
+    if(window.confirm("Confirmar que o pedido está pronto?")) {
+        await updateDoc(doc(db, "pedidos", id), { status: "Concluido" });
+    }
   };
 
   const imprimirPedidoIndividual = () => window.print();
@@ -81,21 +95,13 @@ const Cozinha = () => {
   const historicoFiltrado = filtrarPedidosHistorico();
   const totalFaturamento = historicoFiltrado.reduce((acc, curr) => acc + curr.total, 0);
 
-  // --- TELA DE BLOQUEIO (RENDERIZAÇÃO CONDICIONAL) ---
   if (!estaLogado) {
     return (
       <div className="login-container">
         <div className="login-box">
-          <h2>🔒 Acesso Restrito</h2>
-          <p>Área exclusiva da cozinha</p>
+          <h2>🔒 Cozinha</h2>
           <form onSubmit={handleLogin}>
-            <input 
-              type="password" 
-              placeholder="Digite a senha..." 
-              value={senhaInput}
-              onChange={(e) => setSenhaInput(e.target.value)}
-              autoFocus
-            />
+            <input type="password" placeholder="Senha" value={senhaInput} onChange={(e) => setSenhaInput(e.target.value)} autoFocus />
             <button type="submit">Entrar</button>
           </form>
           {erroSenha && <p className="msg-erro">{erroSenha}</p>}
@@ -104,7 +110,6 @@ const Cozinha = () => {
     );
   }
 
-  // --- TELA DA COZINHA (Igual a anterior, só adicionei o botão de Sair) ---
   return (
     <div className="cozinha-container">
       <header className="cozinha-header no-print">
@@ -122,7 +127,6 @@ const Cozinha = () => {
         </div>
       </header>
 
-      {/* Conteúdo das Abas (Exatamente igual ao código anterior) */}
       {abaAtiva === 'pendentes' && (
         <div className="tela-cozinha">
           <div className="lista-pedidos-cozinha">
@@ -131,20 +135,34 @@ const Cozinha = () => {
                 <div key={pedido.id} className="card-pedido-cozinha">
                   <div className="pedido-header">
                     <h3>#{pedido.id.slice(-4)}</h3> 
-                    <span>{pedido.data.split(' ')[1]}</span>
+                    <span className="hora-pedido">{pedido.data.split(' ')[1]}</span>
                   </div>
-                  <div className="pedido-tipo-entrega">{pedido.tipoEntrega}</div>
+                  
+                  {/* --- AQUI ESTÁ A MUDANÇA PRINCIPAL --- */}
                   <div className="pedido-info-cliente">
-                    <p><strong>End:</strong> {pedido.endereco}</p>
-                    <p><strong>Pag:</strong> {pedido.pagamento}</p>
+                    <p className="cliente-nome">
+                        👤 {pedido.cliente} 
+                        {/* O BADGE ENTRA AQUI DO LADO DO NOME */}
+                        <BadgeFidelidade telefone={pedido.telefone} />
+                    </p>
+                    <p className="cliente-fone">📞 {pedido.telefone || "Sem telefone"}</p>
+                    <p className="cliente-end">📍 {pedido.endereco}</p>
+                    <p className="cliente-pag">💰 {pedido.pagamento}</p>
                   </div>
+                  <hr />
+                  
                   <ul className="pedido-itens-lista">
                     {pedido.itens.map((item, idx) => (
                       <li key={idx}><strong>{item.quantidade}x</strong> {item.nome} {item.obs && <small>({item.obs})</small>}</li>
                     ))}
                   </ul>
+
+                  <div className="total-comanda">
+                    Total: R$ {pedido.total.toFixed(2)}
+                  </div>
+
                   <div className="pedido-acoes no-print">
-                    <button className="btn-imprimir" onClick={imprimirPedidoIndividual}>🖨️</button>
+                    <button className="btn-imprimir" onClick={imprimirPedidoIndividual}>🖨️ Imprimir</button>
                     <button className="btn-concluir" onClick={() => concluirPedido(pedido.id)}>✅ Pronto</button>
                   </div>
                 </div>
@@ -156,30 +174,29 @@ const Cozinha = () => {
 
       {abaAtiva === 'historico' && (
         <div className="tela-historico">
-            {/* ... (Seu código de histórico anterior continua aqui igualzinho) ... */}
-             <div className="filtros-box no-print">
-                <label>Filtrar:</label>
+            <div className="filtros-box no-print">
                 <select value={filtroPeriodo} onChange={(e) => setFiltroPeriodo(e.target.value)}>
-                <option value="hoje">Hoje</option>
-                <option value="data">Data Específica</option>
+                    <option value="hoje">Hoje</option>
+                    <option value="data">Data</option>
                 </select>
-                {filtroPeriodo === 'data' && (
-                <input type="date" value={dataSelecionada} onChange={(e) => setDataSelecionada(e.target.value)} />
-                )}
-                <button className="btn-imprimir-relatorio" onClick={imprimirRelatorio}>🖨️ Imprimir</button>
+                {filtroPeriodo === 'data' && <input type="date" value={dataSelecionada} onChange={(e) => setDataSelecionada(e.target.value)} />}
+                <button className="btn-imprimir-relatorio" onClick={imprimirRelatorio}>Relatório</button>
             </div>
-            
             <div className="area-relatorio-print">
-                 <div className="cabecalho-relatorio"><h2>Relatório Financeiro</h2></div>
+                 <h2>Relatório de Vendas</h2>
                  <div className="resumo-cards">
-                    <div className="card-resumo"><span>Qtd</span><strong>{historicoFiltrado.length}</strong></div>
-                    <div className="card-resumo destaque"><span>Total</span><strong>R$ {totalFaturamento.toFixed(2).replace('.', ',')}</strong></div>
+                    <div className="card-resumo"><span>Pedidos</span><strong>{historicoFiltrado.length}</strong></div>
+                    <div className="card-resumo destaque"><span>Faturamento</span><strong>R$ {totalFaturamento.toFixed(2)}</strong></div>
                  </div>
                  <table className="tabela-historico">
-                    <thead><tr><th>Data</th><th>Tipo</th><th>Total</th></tr></thead>
+                    <thead><tr><th>Hora</th><th>Cliente</th><th>Total</th></tr></thead>
                     <tbody>
                         {historicoFiltrado.map(p => (
-                            <tr key={p.id}><td>{p.data}</td><td>{p.tipoEntrega}</td><td>R$ {p.total.toFixed(2)}</td></tr>
+                            <tr key={p.id}>
+                                <td>{p.data.split(' ')[1]}</td>
+                                <td>{p.cliente}</td>
+                                <td>R$ {p.total.toFixed(2)}</td>
+                            </tr>
                         ))}
                     </tbody>
                  </table>
