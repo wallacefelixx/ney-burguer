@@ -9,57 +9,73 @@ const CODIGO_PIX = "00020126580014br.gov.bcb.pix0136123e4567-e89b-12d3-a456-4266
 
 const Carrinho = () => {
   const { cartItems, cartTotal, removeFromCart, clearCart } = useCart();
+  const navigate = useNavigate();
 
-  // Adaptador (Inglês -> Português)
+  // Variáveis adaptadas
   const carrinho = cartItems;
   const total = cartTotal;
 
   // Estados do Formulário
   const [nomeCliente, setNomeCliente] = useState('');
-  const [telefone, setTelefone] = useState(''); // NOVO CAMPO
+  const [telefone, setTelefone] = useState('');
   const [endereco, setEndereco] = useState('');
   const [formaPagamento, setFormaPagamento] = useState('dinheiro');
-  const [pixCopiado, setPixCopiado] = useState(false);
   
-  const navigate = useNavigate();
+  // Novos Estados para o Troco
+  const [precisaTroco, setPrecisaTroco] = useState(false);
+  const [valorTroco, setValorTroco] = useState('');
 
-  // Formata o telefone automaticamente (11) 99999-9999
+  const [pixCopiado, setPixCopiado] = useState(false);
+
+  // Formata telefone
   const handleTelefoneChange = (e) => {
-    let value = e.target.value.replace(/\D/g, ""); // Remove tudo que não é número
-    value = value.replace(/^(\d{2})(\d)/g, "($1) $2"); // Coloca parênteses no DDD
-    value = value.replace(/(\d)(\d{4})$/, "$1-$2"); // Coloca hífen
+    let value = e.target.value.replace(/\D/g, "");
+    value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
+    value = value.replace(/(\d)(\d{4})$/, "$1-$2");
     setTelefone(value);
   };
 
   const handleCopyPix = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(CODIGO_PIX);
-      setPixCopiado(true);
-      setTimeout(() => setPixCopiado(false), 3000);
-    }
+    navigator.clipboard.writeText(CODIGO_PIX);
+    setPixCopiado(true);
+    setTimeout(() => setPixCopiado(false), 3000);
   };
 
   const finalizarPedido = async () => {
     if (carrinho.length === 0) return;
     
-    // Validação mais rígida: Agora exige telefone
+    // Validação Básica
     if (!nomeCliente.trim() || !endereco.trim() || !telefone.trim()) {
-      alert("Por favor, preencha Nome, Telefone e Endereço para a entrega.");
+      alert("⚠️ Por favor, preencha todos os dados de entrega.");
       return;
     }
 
     if (telefone.length < 14) {
-      alert("Por favor, digite um telefone válido com DDD.");
+      alert("⚠️ Digite um telefone válido com DDD.");
       return;
+    }
+
+    // Validação do Troco
+    let infoPagamento = formaPagamento;
+    if (formaPagamento === 'dinheiro') {
+      if (precisaTroco) {
+        if (!valorTroco) {
+          alert("⚠️ Você informou que precisa de troco. Diga para quanto.");
+          return;
+        }
+        infoPagamento = `Dinheiro (Troco para R$ ${valorTroco})`;
+      } else {
+        infoPagamento = "Dinheiro (Sem troco)";
+      }
     }
 
     const payloadPedido = {
       cliente: nomeCliente,
-      telefone: telefone, // ENVIA PARA O BANCO
+      telefone: telefone,
       endereco: endereco,
       itens: carrinho,
       total: total,
-      pagamento: formaPagamento,
+      pagamento: infoPagamento, // Envia a info formatada
       status: 'Pendente',
       data_timestamp: serverTimestamp(),
       data: new Date().toLocaleString('pt-BR'),
@@ -71,7 +87,7 @@ const Carrinho = () => {
       clearCart();
       navigate('/pedidos');
     } catch (error) {
-      console.error("Falha ao registrar pedido:", error);
+      console.error("Erro ao enviar:", error);
       alert("Erro ao enviar pedido. Tente novamente.");
     }
   };
@@ -89,94 +105,132 @@ const Carrinho = () => {
     <div className="carrinho-container">
       <h2 className="titulo-secao">Finalizar Pedido</h2>
       
-      <div className="lista-itens">
-        {carrinho.map((item, index) => (
-          <div key={`${item.id}-${index}`} className="item-carrinho">
-             <div className="info-item">
-                <h4>{item.quantidade}x {item.nome}</h4>
-                {item.obs && <p className="obs-item">Obs: {item.obs}</p>}
-             </div>
-             <div className="actions-item">
-                <span className="preco-item">R$ {(item.preco * item.quantidade).toFixed(2)}</span>
-                <button onClick={() => removeFromCart(item.id, item.obs)} className="btn-remover">Remover</button>
-             </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="total-pedido">
-        <h3>Total Geral: R$ {total.toFixed(2)}</h3>
+      {/* Resumo do Pedido */}
+      <div className="resumo-pedido">
+        <div className="lista-itens-resumo">
+          {carrinho.map((item, index) => (
+            <div key={`${item.id}-${index}`} className="item-linha">
+               <div className="item-info">
+                  <span className="qtd">{item.quantidade}x</span>
+                  <span className="nome">{item.nome}</span>
+               </div>
+               <span className="preco">R$ {(item.preco * item.quantidade).toFixed(2)}</span>
+               <button onClick={() => removeFromCart(item.id, item.obs)} className="btn-lixeira">🗑️</button>
+            </div>
+          ))}
+        </div>
+        <div className="total-badge">
+          <span>Total a pagar:</span>
+          <strong>R$ {total.toFixed(2)}</strong>
+        </div>
       </div>
 
       <div className="formulario-entrega">
-        <h3>Dados de Entrega</h3>
+        <h3>📍 Dados de Entrega</h3>
         
-        {/* GRUPO DE DADOS DO CLIENTE */}
-        <div className="form-row">
+        {/* Grid para alinhar Nome e Telefone */}
+        <div className="form-grid">
             <div className="form-grupo">
-            <label htmlFor="nome">Seu Nome:</label>
-            <input 
-                id="nome"
-                type="text" 
-                value={nomeCliente} 
-                onChange={e => setNomeCliente(e.target.value)} 
-                placeholder="Ex: João Silva" 
-            />
+                <label>Seu Nome</label>
+                <input 
+                    type="text" 
+                    className="input-moderno"
+                    value={nomeCliente} 
+                    onChange={e => setNomeCliente(e.target.value)} 
+                    placeholder="Ex: João Silva" 
+                />
             </div>
 
             <div className="form-grupo">
-            <label htmlFor="telefone">WhatsApp / Telefone:</label>
-            <input 
-                id="telefone"
-                type="tel" 
-                value={telefone} 
-                onChange={handleTelefoneChange} 
-                maxLength="15"
-                placeholder="(37) 99999-9999" 
-            />
+                <label>WhatsApp / Celular</label>
+                <input 
+                    type="tel" 
+                    className="input-moderno"
+                    value={telefone} 
+                    onChange={handleTelefoneChange} 
+                    maxLength="15"
+                    placeholder="(37) 99999-9999" 
+                />
             </div>
         </div>
 
         <div className="form-grupo">
-          <label htmlFor="endereco">Endereço Completo:</label>
+          <label>Endereço Completo</label>
           <textarea 
-            id="endereco"
+            className="input-moderno textarea-end"
             value={endereco} 
             onChange={e => setEndereco(e.target.value)} 
             placeholder="Rua, Número, Bairro e Ponto de Referência..."
-            rows="4" 
+            rows="3" 
           />
         </div>
 
+        <h3>💳 Pagamento</h3>
         <div className="form-grupo">
-          <label htmlFor="pagamento">Forma de Pagamento:</label>
-          <select id="pagamento" value={formaPagamento} onChange={e => setFormaPagamento(e.target.value)}>
-            <option value="dinheiro">Dinheiro (Levar troco)</option>
-            <option value="cartao">Cartão (Maquininha)</option>
-            <option value="pix">PIX (Pagamento imediato)</option>
+          <select 
+            className="input-moderno select-pag" 
+            value={formaPagamento} 
+            onChange={e => setFormaPagamento(e.target.value)}
+          >
+            <option value="dinheiro">💵 Dinheiro</option>
+            <option value="cartao">💳 Cartão (Entrega)</option>
+            <option value="pix">💠 PIX</option>
           </select>
         </div>
 
-        {formaPagamento === 'pix' && (
-          <div className="pix-area animate-fade-in">
-            <div className="pix-header"><h4>Pagamento via PIX</h4></div>
-            <p className="pix-instrucao">Use o Copia e Cola abaixo:</p>
-            
-            <div className="qr-code-wrapper">
-                <img src="https://placehold.co/150x150/FBBF24/1a1a1a?text=QR+Code" alt="QR" className="qr-code-img" />
+        {/* --- LÓGICA DO DINHEIRO E TROCO --- */}
+        {formaPagamento === 'dinheiro' && (
+          <div className="area-troco fade-in">
+            <p className="label-troco">Vai precisar de troco?</p>
+            <div className="opcoes-troco">
+                <button 
+                    className={`btn-opcao ${!precisaTroco ? 'ativo' : ''}`}
+                    onClick={() => setPrecisaTroco(false)}
+                >
+                    Não, tenho certinho
+                </button>
+                <button 
+                    className={`btn-opcao ${precisaTroco ? 'ativo' : ''}`}
+                    onClick={() => setPrecisaTroco(true)}
+                >
+                    Sim, preciso
+                </button>
             </div>
+            
+            {precisaTroco && (
+                <div className="input-troco-wrapper fade-in">
+                    <label>Troco para quanto?</label>
+                    <input 
+                        type="number" 
+                        placeholder="Ex: 50" 
+                        className="input-moderno"
+                        value={valorTroco}
+                        onChange={(e) => setValorTroco(e.target.value)}
+                    />
+                </div>
+            )}
+          </div>
+        )}
 
+        {/* --- LÓGICA DO PIX --- */}
+        {formaPagamento === 'pix' && (
+          <div className="pix-area fade-in">
+            <div className="pix-alerta">
+                ⚠️ NÃO ESQUEÇA DE ENVIAR O COMPROVANTE!
+                <small>Seu pedido só será preparado após o envio.</small>
+            </div>
+            
             <div className="input-group-copy">
               <input type="text" value={CODIGO_PIX} readOnly disabled />
               <button type="button" onClick={handleCopyPix} className={`btn-copy ${pixCopiado ? 'success' : ''}`}>
-                {pixCopiado ? 'Copiado!' : 'Copiar'}
+                {pixCopiado ? 'Copiado!' : 'Copiar Chave'}
               </button>
             </div>
           </div>
         )}
 
         <button className="btn-finalizar" onClick={finalizarPedido}>
-          Confirmar Pedido
+          ✅ Confirmar Pedido
         </button>
       </div>
     </div>

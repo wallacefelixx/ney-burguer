@@ -1,252 +1,354 @@
-/* src/pages/Carrinho.css */
+/* --- CONFIGURAÇÕES GERAIS DA PÁGINA --- */
 .carrinho-container {
+  max-width: 600px; /* Limita a largura no PC para não ficar esticado */
+  margin: 0 auto;
+  padding: 20px 20px 80px; /* Padding extra embaixo */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+/* Título com detalhe dourado */
+.titulo-secao {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 25px;
+  border-bottom: 4px solid #FBBF24; /* Amarelo da Marca */
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* --- ÁREA DO RESUMO DO PEDIDO (Estilo Recibo) --- */
+.resumo-pedido {
   background-color: #fff;
-  min-height: 100vh;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
   padding: 20px;
-  padding-bottom: 100px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Sombra suave */
+  margin-bottom: 30px;
 }
 
-.titulo-carrinho {
-  font-size: 24px;
-  font-weight: 900;
-  margin-bottom: 20px;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-/* Item da lista */
-.item-carrinho {
+.item-linha {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid #eee;
-  padding: 15px 0;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px dashed #e5e7eb;
 }
 
-.item-info h4 {
-  font-size: 16px;
-  margin-bottom: 5px;
+.item-linha:last-child {
+  border-bottom: none;
 }
 
-.item-obs {
-  font-size: 12px;
-  color: #666;
-  font-style: italic;
-}
-
-.item-preco {
-  text-align: right;
-}
-
-.btn-remover {
-  color: red;
-  font-size: 12px;
-  margin-top: 5px;
-  background: none;
-  border: none;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-/* Rodapé com Total e Botão */
-.footer-carrinho {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #fff;
-  padding: 20px;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-  border-top: 1px solid #eee;
-}
-
-.linha-total {
-  display: flex;
-  justify-content: space-between;
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-.btn-finalizar {
-  background-color: #25D366; /* Verde WhatsApp */
-  color: white;
-  width: 100%;
-  padding: 15px;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: bold;
+.item-info {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-.carrinho-vazio {
-  text-align: center;
-  margin-top: 50px;
-  color: #666;
+.qtd {
+  background-color: #FBBF24;
+  color: #000;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.9rem;
 }
 
-.opcoes-entrega {
+.nome {
+  font-weight: 500;
+}
+
+.preco {
+  font-weight: 600;
+  color: #374151;
+}
+
+.btn-lixeira {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  opacity: 0.6;
+  transition: all 0.2s;
+  padding: 5px;
+}
+
+.btn-lixeira:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  color: #ef4444;
+}
+
+.total-badge {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 2px solid #f3f4f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.3rem;
+}
+
+.total-badge strong {
+  color: #059669; /* Verde Dinheiro */
+}
+
+/* --- FORMULÁRIO E INPUTS MODERNOS --- */
+.formulario-entrega h3 {
+  font-size: 1.1rem;
+  color: #4b5563;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Grid System para alinhar Nome e Telefone */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Divide em 2 colunas iguais */
+  gap: 15px;
+}
+
+.form-grupo {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-grupo label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+/* Estilo unificado dos Inputs */
+.input-moderno {
+  width: 100%;
+  padding: 14px 16px; /* Mais alto para facilitar o toque no celular */
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: #f9fafb;
+  color: #1f2937;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.input-moderno:focus {
+  border-color: #FBBF24; /* Foco Dourado */
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.15);
+}
+
+.textarea-end {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.select-pag {
+  cursor: pointer;
+  appearance: none; /* Remove estilo padrão do navegador */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px top 50%;
+  background-size: 12px auto;
+}
+
+/* --- ÁREA DE TROCO --- */
+.area-troco {
+  background-color: #fffbeb; /* Fundo amarelo bem clarinho */
+  border: 1px solid #fcd34d;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: -10px;
+  margin-bottom: 20px;
+}
+
+.label-troco {
+  font-weight: 700;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.opcoes-troco {
   display: flex;
   gap: 10px;
-  margin-top: 5px;
+  margin-bottom: 15px;
 }
 
 .btn-opcao {
   flex: 1;
   padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border: 1px solid #d1d5db;
   background: white;
-  font-weight: bold;
+  border-radius: 8px;
   cursor: pointer;
-  transition: 0.2s;
+  font-weight: 600;
+  transition: all 0.2s;
+  color: #4b5563;
 }
 
 .btn-opcao.ativo {
-  background-color: #FBBF24; /* Amarelo Ney */
-  border-color: #FBBF24;
-  color: black;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  background-color: #10b981; /* Verde Ativo */
+  color: white;
+  border-color: #059669;
+  box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
 }
 
-/* Animação suave ao abrir o endereço */
-.anime-fade {
-  animation: fadeIn 0.3s ease-in;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.aviso-retirada {
-  background-color: #e0f2fe;
-  color: #0369a1;
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 14px;
-  margin-bottom: 15px;
-  border: 1px solid #bae6fd;
-}
-
-/* Aumenta a caixa de endereço */
-.form-grupo textarea {
-  height: 120px; /* Ficou mais alto agora */
-  resize: vertical; /* Permite o usuário aumentar mais se quiser */
-}
-
-/* --- ESTILOS DA ÁREA DO PIX --- */
+/* --- ÁREA DO PIX --- */
 .pix-area {
-  background-color: #fff3cd; /* Um fundo amarelinho para destacar */
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 25px;
-  border: 2px dashed #FBBF24;
+  margin-top: 20px;
+}
+
+.pix-alerta {
+  background-color: #fee2e2; /* Fundo Vermelho Claro */
+  color: #991b1b; /* Texto Vermelho Escuro */
+  border: 2px solid #f87171;
+  padding: 15px;
+  border-radius: 10px;
   text-align: center;
-}
-
-.pix-area h4 {
-  margin-top: 0;
-  color: #d97706;
-}
-
-.pix-instrucao {
-  margin-bottom: 15px;
-  color: #555;
-}
-
-.qr-code-box img {
-  max-width: 180px;
-  border-radius: 8px;
-  border: 3px solid #fff;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  font-weight: 800;
   margin-bottom: 20px;
+  animation: pulse 2s infinite; /* Animação Pulsante */
 }
 
-/* Caixa do input + botão juntos */
-.copia-cola-box {
+.pix-alerta small {
+  display: block;
+  font-weight: 500;
+  margin-top: 5px;
+  font-size: 0.85rem;
+  color: #b91c1c;
+}
+
+.input-group-copy {
   display: flex;
   gap: 10px;
-  margin-bottom: 10px;
 }
 
-/* Input do PIX (somente leitura) */
-.copia-cola-box input {
-  flex-grow: 1; /* Ocupa o espaço que sobrar */
-  background-color: #e9ecef;
-  color: #495057;
-  cursor: not-allowed; /* Mostra que não pode editar */
-  font-family: monospace; /* Fonte de código */
-  font-size: 0.9rem;
-  border: 1px solid #ced4da;
+.input-group-copy input {
+  flex: 1;
+  padding: 12px;
+  background-color: #e5e7eb;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  color: #6b7280;
+  font-family: monospace;
 }
 
-/* Botão de Copiar */
-.btn-copiar {
-  background-color: #1a1a1a;
+.btn-copy {
+  background-color: #1f2937;
   color: #FBBF24;
   border: none;
+  border-radius: 8px;
   padding: 0 20px;
   font-weight: bold;
-  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  white-space: nowrap; /* Não quebra linha */
+  white-space: nowrap;
 }
 
-.btn-copiar:hover {
-  background-color: #333;
+.btn-copy:active { transform: scale(0.95); }
+
+.btn-copy.success {
+  background-color: #10b981;
+  color: white;
 }
 
-/* Estilo quando o botão é clicado (feedback verde) */
-.btn-copiar.copiado {
-  background-color: #22c55e !important; /* Verde sucesso */
-  color: white !important;
+/* --- BOTÃO FINALIZAR --- */
+.btn-finalizar {
+  width: 100%;
+  background-color: #10b981; /* Verde Sucesso */
+  color: white;
+  padding: 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  margin-top: 20px;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  transition: transform 0.2s, background-color 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
-.pix-aviso {
-  color: #666;
-  margin-top: 10px;
+.btn-finalizar:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
 }
 
-/* Animação simples para quando a área do PIX aparecer */
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-in;
+.btn-finalizar:active {
+  transform: scale(0.98);
 }
+
+/* CARRINHO VAZIO */
+.carrinho-vazio {
+  text-align: center;
+  padding-top: 50px;
+  color: #6b7280;
+}
+
+.carrinho-vazio h2 { margin-bottom: 20px; }
+
+.btn-voltar {
+  display: inline-block;
+  background-color: #FBBF24;
+  color: #1a1a1a;
+  padding: 12px 25px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+/* --- ANIMAÇÕES E RESPONSIVIDADE --- */
+
+/* Responsivo para Celular */
+@media (max-width: 480px) {
+  .form-grid {
+    grid-template-columns: 1fr; /* Um campo embaixo do outro no celular */
+    gap: 0;
+  }
+  
+  .carrinho-container {
+    padding: 15px 15px 80px; /* Menos borda no celular */
+  }
+
+  .input-group-copy {
+    flex-direction: column;
+  }
+  
+  .btn-copy {
+    width: 100%;
+    padding: 12px;
+  }
+}
+
+/* Animação Fade In (suave) */
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsivo para celular */
-@media (max-width: 480px) {
-  .copia-cola-box {
-    flex-direction: column; /* Input em cima, botão embaixo no celular */
-  }
-  .btn-copiar {
-    padding: 12px;
-    width: 100%;
-  }
-  .form-grupo textarea {
-    height: 100px;
-  }
-}
-
-/* Layout responsivo para Nome e Telefone */
-.form-row {
-  display: flex;
-  gap: 15px;
-}
-
-.form-row .form-grupo {
-  flex: 1; /* Faz os dois ocuparem o mesmo tamanho */
-}
-
-@media (max-width: 480px) {
-  .form-row {
-    flex-direction: column; /* No celular, um embaixo do outro */
-    gap: 0;
-  }
+/* Animação Pulse (Alerta PIX) */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(248, 113, 113, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); }
 }
