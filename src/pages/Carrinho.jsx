@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useCarrinho } from '../contexts/CartContext';
+import { useCart } from '../contexts/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
 import './Carrinho.css';
 import { db } from '../firebase';
@@ -9,7 +9,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 const CODIGO_PIX_COPIA_COLA = "00020126580014br.gov.bcb.pix0136123e4567-e89b-12d3-a456-426614174000520400005303986540410.005802BR5913Ney Burguer6008Divinopolis62070503***6304E2CA";
 
 const Carrinho = () => {
-  const { carrinho, total, removerDoCarrinho, limparCarrinho } = useCarrinho();
+  const { carrinho, total, removerDoCarrinho, limparCarrinho } = useCart();
   const [nomeCliente, setNomeCliente] = useState('');
   const [endereco, setEndereco] = useState('');
   const [formaPagamento, setFormaPagamento] = useState('dinheiro');

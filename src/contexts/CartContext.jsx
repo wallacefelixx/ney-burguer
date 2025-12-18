@@ -52,6 +52,6 @@ export const CartProvider = ({ children }) => {
 };
 
 // Um "atalho" para usar o contexto mais fácil nas outras páginas
-export const useCarrinho= () => {
+export const useCart= () => {
   return useContext(CartContext);
 };
