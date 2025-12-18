@@ -251,3 +251,62 @@
     display: block;
   }
 }
+
+/* Login Simples */
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1a1a1a;
+}
+
+.login-box {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  width: 90%;
+  max-width: 350px;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 10px;
+  margin: 15px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 10px;
+  background-color: #FBBF24;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.msg-erro {
+  color: red;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.titulo-logout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.btn-sair {
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
