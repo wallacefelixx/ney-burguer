@@ -1,23 +1,32 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
+
+// Importe suas páginas...
 import Home from './pages/Home';
 import Detalhes from './pages/Detalhes';
 import Carrinho from './pages/Carrinho';
 import Cozinha from './pages/Cozinha';
-import MeusPedidos from './pages/MeusPedidos'; // <--- O Import que faltava
+import MeusPedidos from './pages/MeusPedidos';
+
+// 1. IMPORTE O RODAPÉ AQUI
+import Rodape from './components/Rodape'; // (Ou './Rodape' se não criou a pasta components)
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/produto/:id" element={<Detalhes />} />
-        <Route path="/carrinho" element={<Carrinho />} />
-        <Route path="/cozinha" element={<Cozinha />} />
-        {/* A Rota que estava faltando: */}
-        <Route path="/pedidos" element={<MeusPedidos />} />
-      </Routes>
-    </BrowserRouter>
+    <HashRouter>
+      <div className="app-container" style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/produto/:id" element={<Detalhes />} />
+          <Route path="/carrinho" element={<Carrinho />} />
+          <Route path="/cozinha" element={<Cozinha />} />
+          <Route path="/pedidos" element={<MeusPedidos />} />
+        </Routes>
+
+        {/* 2. COLOQUE O RODAPÉ AQUI NO FINAL */}
+        <Rodape />
+      </div>
+    </HashRouter>
   );
 }
 

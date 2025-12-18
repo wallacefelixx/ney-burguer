@@ -1,0 +1,33 @@
+.rodape {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 40px 20px 20px;
+  margin-top: auto; /* Empurra pro final da página */
+  border-top: 4px solid #FBBF24;
+  text-align: center;
+}
+
+.rodape-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.rodape h3 {
+  color: #FBBF24;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.rodape-info p {
+  margin: 8px 0;
+  color: #ccc;
+  font-size: 0.95rem;
+}
+
+.rodape-copy {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #333;
+  font-size: 0.8rem;
+  color: #666;
+}
