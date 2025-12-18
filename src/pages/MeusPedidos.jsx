@@ -1,92 +1,131 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import './MeusPedidos.css';
-// Importações do Firebase
 import { db } from '../firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { Link } from 'react-router-dom';
 
 const MeusPedidos = () => {
+  const [telefoneInput, setTelefoneInput] = useState('');
   const [pedidos, setPedidos] = useState([]);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [buscou, setBuscou] = useState(false); // Controla se já clicou em buscar
 
-  useEffect(() => {
-    const carregarMeusPedidos = async () => {
-      // 1. Pega os IDs que salvamos no localStorage na hora da compra
-      const idsSalvos = JSON.parse(localStorage.getItem('meusPedidosIds')) || [];
-      
-      if (idsSalvos.length === 0) return;
+  // Mesma máscara do carrinho para garantir que a busca bata com o banco
+  const handleTelefoneChange = (e) => {
+    let value = e.target.value.replace(/\D/g, "");
+    value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
+    value = value.replace(/(\d)(\d{4})$/, "$1-$2");
+    setTelefoneInput(value);
+  };
 
-      const listaTemp = [];
-      
-      // 2. Busca cada pedido no Firebase para saber o status atual (Pendente ou Concluido)
-      for (const id of idsSalvos) {
-        try {
-          const docRef = doc(db, "pedidos", id);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            listaTemp.push({ id: docSnap.id, ...docSnap.data() });
-          }
-        } catch (error) {
-          console.log("Pedido antigo não encontrado ou erro de rede:", id);
-        }
-      }
-      
-      // 3. Ordena do mais novo para o mais velho
-      setPedidos(listaTemp.sort((a,b) => b.data_timestamp - a.data_timestamp));
-    };
-
-    carregarMeusPedidos();
+  const buscarPedidos = async (e) => {
+    e.preventDefault();
     
-    // Atualiza a cada 5 segundos para ver se o status mudou para "Saiu para Entrega"
-    const intervalo = setInterval(carregarMeusPedidos, 5000);
-    return () => clearInterval(intervalo);
-  }, []);
+    if (telefoneInput.length < 14) {
+      alert("Por favor, digite o número completo com DDD.");
+      return;
+    }
+
+    setLoading(true);
+    setPedidos([]); // Limpa lista anterior
+    setBuscou(false);
+
+    try {
+      // Busca no banco onde o campo 'telefone' é igual ao digitado
+      const q = query(
+        collection(db, "pedidos"),
+        where("telefone", "==", telefoneInput)
+      );
+
+      const querySnapshot = await getDocs(q);
+      const lista = [];
+      
+      querySnapshot.forEach((doc) => {
+        lista.push({ id: doc.id, ...doc.data() });
+      });
+
+      // Ordena do mais recente para o mais antigo (manual para evitar erro de índice)
+      lista.sort((a, b) => {
+         // Se tiver timestamp, usa ele, senão usa string (fallback)
+         const dateA = a.data_timestamp ? a.data_timestamp.seconds : 0;
+         const dateB = b.data_timestamp ? b.data_timestamp.seconds : 0;
+         return dateB - dateA;
+      });
+
+      setPedidos(lista);
+      setBuscou(true); // Marca que a busca terminou
+    } catch (error) {
+      console.error("Erro ao buscar:", error);
+      alert("Ocorreu um erro ao buscar. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Função para definir a cor do status
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Pendente': return 'status-pendente';
+      case 'Concluido': return 'status-concluido';
+      default: return '';
+    }
+  };
 
   return (
     <div className="meus-pedidos-container">
-      <header className="header-pedidos">
-        <button className="btn-voltar-pedidos" onClick={() => navigate('/')}>
-          ← Voltar
+      <h2 className="titulo-rastreio">📦 Rastrear Pedidos</h2>
+      <p className="subtitulo-rastreio">Digite seu WhatsApp para ver o histórico e status.</p>
+
+      {/* Área de Busca */}
+      <form onSubmit={buscarPedidos} className="search-box">
+        <input 
+          type="tel" 
+          placeholder="(37) 99999-9999" 
+          value={telefoneInput}
+          onChange={handleTelefoneChange}
+          maxLength="15"
+          autoFocus
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? 'Buscando...' : '🔍 Buscar'}
         </button>
-        <h1>Meus Pedidos</h1>
-      </header>
+      </form>
 
-      <div className="lista-meus-pedidos">
-        {pedidos.length === 0 ? (
-          <div className="sem-pedidos">
-            <p>Você ainda não fez nenhum pedido.</p>
-            <button onClick={() => navigate('/')}>Fazer pedido agora</button>
+      {/* Resultados */}
+      <div className="lista-resultados">
+        
+        {/* Caso não ache nada após buscar */}
+        {buscou && pedidos.length === 0 && (
+          <div className="msg-vazio">
+            <h3>Nenhum pedido encontrado!</h3>
+            <p>Verifique se o número está correto ou faça seu primeiro pedido.</p>
+            <Link to="/" className="btn-voltar-home">Ir para o Cardápio</Link>
           </div>
-        ) : (
-          pedidos.map(pedido => (
-            <div key={pedido.id} className="card-meu-pedido">
-              <div className="pedido-topo">
-                <span className="pedido-id">#{pedido.id.slice(-4)}</span>
-                <span className="pedido-data">{pedido.data}</span>
-              </div>
-
-              <div className="pedido-status-box">
-                <span className={`status-badge ${pedido.status.toLowerCase()}`}>
-                  {pedido.status === 'Pendente' ? '🕒 Preparando' : '✅ Pronto / Saiu'}
-                </span>
-                <span className="tipo-entrega">{pedido.tipoEntrega}</span>
-              </div>
-
-              <ul className="itens-resumo">
-                {pedido.itens.map((item, idx) => (
-                  <li key={idx}>
-                    {item.quantidade}x {item.nome}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="pedido-total-row">
-                <span>Total:</span>
-                <strong>R$ {pedido.total.toFixed(2).replace('.', ',')}</strong>
-              </div>
-            </div>
-          ))
         )}
+
+        {/* Lista de Pedidos */}
+        {pedidos.map(pedido => (
+          <div key={pedido.id} className="card-pedido-cliente">
+            <div className="card-header">
+              <span className="data-pedido">📅 {pedido.data}</span>
+              <span className={`status-badge ${getStatusColor(pedido.status)}`}>
+                {pedido.status === 'Pendente' ? '⏳ Preparando' : '✅ Pronto / Saiu'}
+              </span>
+            </div>
+            
+            <div className="card-resumo-itens">
+              {pedido.itens.map((item, idx) => (
+                <p key={idx}>• {item.quantidade}x {item.nome}</p>
+              ))}
+            </div>
+            
+            <div className="card-footer">
+              <strong>Total: R$ {pedido.total.toFixed(2)}</strong>
+              <small>Pagamento: {pedido.pagamento}</small>
+            </div>
+          </div>
+        ))}
+
       </div>
     </div>
   );

@@ -1,120 +1,166 @@
 .meus-pedidos-container {
-  min-height: 100vh;
-  background-color: #f3f4f6;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-  /* Adicione margem no topo para o cabeçalho fixo do celular não cobrir */
-  padding-top: 20px; 
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px 20px 80px;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
 }
 
-.header-pedidos {
+.titulo-rastreio {
+  color: #111;
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+}
+
+.subtitulo-rastreio {
+  color: #666;
+  margin-bottom: 25px;
+}
+
+/* Caixa de Busca */
+.search-box {
   display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
-  position: relative; /* Garante que o flex funcione bem */
-}
-
-.header-pedidos h1 {
-  font-size: 20px;
-  color: #333;
-  font-weight: 800;
-  text-transform: uppercase;
-  margin: 0; /* Remove margens padrão que podem empurrar */
-}
-
-/* NOVA CLASSE ESPECÍFICA */
-.btn-voltar-pedidos {
+  gap: 10px;
+  margin-bottom: 30px;
   background: white;
-  border: 1px solid #ddd;
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-weight: bold;
-  color: #555;
-  cursor: pointer;
-  
-  /* Garante que ele não flutue absoluto como o outro */
-  position: static; 
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
 }
 
+.search-box input {
+  flex: 1;
+  border: none;
+  font-size: 1.1rem;
+  padding: 10px;
+  outline: none;
+  background: transparent;
+}
+
+.search-box button {
+  background-color: #FBBF24;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.search-box button:hover {
+  background-color: #f59e0b;
+}
+
+.search-box button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
 
 /* Card do Pedido */
-.card-meu-pedido {
+.card-pedido-cliente {
   background: white;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: left;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  border-left: 5px solid #ccc;
+  transition: transform 0.2s;
 }
 
-.pedido-topo {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 12px;
-  color: #888;
+.card-pedido-cliente:hover {
+  transform: translateY(-2px);
+  border-color: #FBBF24;
 }
 
-.pedido-id {
-  font-weight: bold;
-  color: #333;
-}
-
-.pedido-status-box {
+.card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
-  padding-bottom: 10px;
   border-bottom: 1px dashed #eee;
+  padding-bottom: 10px;
+}
+
+.data-pedido {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.9rem;
 }
 
 .status-badge {
-  padding: 5px 10px;
-  border-radius: 4px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
   font-weight: bold;
-  font-size: 13px;
   text-transform: uppercase;
 }
 
-.status-badge.pendente {
+.status-pendente {
   background-color: #fff7ed;
-  color: #ea580c; /* Laranja */
+  color: #c2410c;
   border: 1px solid #ffedd5;
 }
 
-.status-badge.concluido {
-  background-color: #dcfce7;
-  color: #16a34a; /* Verde */
+.status-concluido {
+  background-color: #f0fdf4;
+  color: #15803d;
   border: 1px solid #bbf7d0;
-  border-left: none; /* Ajuste visual */
 }
 
-/* Quando concluído, muda a borda do card */
-.card-meu-pedido:has(.status-badge.concluido) {
-  border-left-color: #16a34a;
+.card-resumo-itens p {
+  margin: 5px 0;
+  color: #374151;
 }
 
-.tipo-entrega {
-  font-size: 12px;
-  background: #f3f4f6;
-  padding: 4px 8px;
-  border-radius: 10px;
-  color: #555;
-}
-
-.itens-resumo {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 10px;
-  font-size: 14px;
-  color: #444;
-}
-
-.pedido-total-row {
+.card-footer {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #f3f4f6;
   display: flex;
   justify-content: space-between;
-  font-size: 16px;
-  color: #333;
+  align-items: center;
+}
+
+.card-footer strong {
+  font-size: 1.1rem;
+  color: #111;
+}
+
+.card-footer small {
+  color: #6b7280;
+}
+
+/* Mensagem de Vazio */
+.msg-vazio {
+  margin-top: 40px;
+  color: #666;
+}
+
+.btn-voltar-home {
+  display: inline-block;
+  margin-top: 15px;
+  text-decoration: none;
+  color: #FBBF24;
+  font-weight: bold;
+  border: 2px solid #FBBF24;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.btn-voltar-home:hover {
+  background-color: #FBBF24;
+  color: white;
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+  .search-box {
+    flex-direction: column;
+  }
+  .search-box button {
+    width: 100%;
+  }
 }
