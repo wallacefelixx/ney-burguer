@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useCarrinho } from '../context/CartContext';
+import { useCarrinho } from '../contexts/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
 import './Carrinho.css';
 import { db } from '../firebase';
