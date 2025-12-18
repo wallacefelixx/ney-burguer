@@ -7,6 +7,7 @@ import Detalhes from './pages/Detalhes';
 import Carrinho from './pages/Carrinho';
 import Cozinha from './pages/Cozinha';
 import MeusPedidos from './pages/MeusPedidos';
+import Navbar from './components/Navbar';
 
 // 1. IMPORTE O RODAPÉ AQUI
 import Rodape from './components/Rodape'; // (Ou './Rodape' se não criou a pasta components)
@@ -15,6 +16,9 @@ function App() {
   return (
     <HashRouter>
       <div className="app-container" style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
+
+        <Navbar />
+
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/produto/:id" element={<Detalhes />} />

@@ -20,9 +20,8 @@ const Rodape = () => {
           </p>
           <div className="redes-sociais">
             {/* Links fictícios para demonstração */}
-            <a href="#" className="social-link">Instagram</a>
-            <a href="#" className="social-link">Facebook</a>
-            <a href="#" className="social-link">WhatsApp</a>
+            <a href="https://www.instagram.com/neyburguerlanches/" className="social-link">Instagram</a>
+            <a href="https://w.app/kjl3cz" className="social-link">WhatsApp</a>
           </div>
         </div>
 
@@ -30,12 +29,12 @@ const Rodape = () => {
         <div className="rodape-coluna">
           <h4>📍 Onde Estamos</h4>
           <address>
-            <p>Rua do Sabor, 123 - Centro</p>
+            <p>Rua Bayssur, 570 - Maria Helena</p>
             <p>Divinópolis - MG</p>
-            <p>CEP: 35500-000</p>
+            <p>CEP: 35500-034</p>
           </address>
           <div className="contato-direto">
-            <p>📞 (37) 99888-7777</p>
+            <p>📞 (37) 3215-3414</p>
             <p>✉️ contato@neyburguer.com.br</p>
           </div>
         </div>
@@ -44,9 +43,10 @@ const Rodape = () => {
         <div className="rodape-coluna">
           <h4>🕒 Horário de Atendimento</h4>
           <ul className="lista-horarios">
-            <li><span>Ter - Qui:</span> 18h às 23h</li>
-            <li><span>Sex - Sáb:</span> 18h às 00h30</li>
-            <li><span>Domingo:</span> 18h às 23h30</li>
+            <li><span>Qui:</span> 18:30hs às 23:30hs</li>
+            <li><span>Sex:</span> 18:30h às 23:30hs</li>
+            <li><span>Sábado:</span> 18:30hs às 23h30hs</li>
+            <li><span>Domingo:</span> 18:30hs às 23h30hs</li>
           </ul>
           <div className="links-uteis">
              <Link to="/pedidos">Meus Pedidos</Link>
@@ -57,7 +57,7 @@ const Rodape = () => {
 
       {/* Barra Final de Copyright */}
       <div className="rodape-bottom">
-        <p>&copy; {new Date().getFullYear()} Ney Burguer & Grill. Todos os direitos reservados.</p>
+        <p>&copy; {new Date().getFullYear()} Ney Burguer. Todos os direitos reservados.</p>
         <p className="dev-credito">Desenvolvido por <strong>Wallace Tech</strong></p>
       </div>
     </footer>

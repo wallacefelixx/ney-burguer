@@ -1,0 +1,106 @@
+/* Container fixo no topo */
+.navbar {
+  background-color: #1a1a1a; /* Fundo escuro premium */
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Garante que fique por cima de tudo */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* Sombra elegante */
+  border-bottom: 1px solid #333;
+  padding: 0 15px;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 70px; /* Altura confortável para o dedo */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Logo e Tipografia */
+.navbar-logo {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.logo-highlight {
+  color: #FBBF24; /* O Dourado da marca */
+}
+
+/* Área da Direita (Links) */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Links (Pedidos e Carrinho) */
+.nav-link, .nav-cart-btn {
+  color: #e5e5e5;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column; /* Ícone em cima, texto embaixo */
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-link:hover, .nav-cart-btn:hover {
+  color: #FBBF24;
+}
+
+.nav-link svg, .nav-cart-btn svg {
+  margin-bottom: 2px;
+}
+
+/* Badge (Bolinha vermelha do contador) */
+.icon-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  background-color: #ef4444; /* Vermelho vibrante */
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #1a1a1a; /* Borda da cor do fundo para destacar */
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Animaçãozinha quando o número muda */
+@keyframes popIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+/* Ajustes para Telas Muito Pequenas (iPhone SE, etc) */
+@media (max-width: 360px) {
+  .navbar-logo {
+    font-size: 1.2rem;
+  }
+  .link-text {
+    display: none; /* Esconde o texto "Pedidos/Carrinho" se a tela for minúscula */
+  }
+  .navbar-actions {
+    gap: 15px;
+  }
+}
