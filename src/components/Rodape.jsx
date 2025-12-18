@@ -18,7 +18,7 @@ const Rodape = () => {
             <p>🕒 Aberto de Terça a Domingo, das 18h às 00h</p>
         </div>
         <div className="rodape-copy">
-            <p>&copy; 2025 Ney Burguer. Feito com ❤️ por Wallace.</p>
+            <p>&copy; 2025 Ney Burguer. Feito por Wallace.</p>
         </div>
       </div>
     </footer>
