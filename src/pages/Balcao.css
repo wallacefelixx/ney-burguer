@@ -1,0 +1,93 @@
+.balcao-container {
+  display: flex;
+  height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #1a1a1a;
+}
+
+/* Lado Esquerdo */
+.balcao-menu {
+  flex: 2;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.balcao-menu h2 { color: #FBBF24; margin-bottom: 20px; }
+
+.grid-produtos-balcao {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.btn-prod-balcao {
+  background: #333;
+  color: white;
+  border: 1px solid #444;
+  padding: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: 0.1s;
+}
+
+.btn-prod-balcao:active { background: #FBBF24; color: black; }
+
+/* Lado Direito */
+.balcao-carrinho {
+  flex: 1;
+  background: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-left: 5px solid #FBBF24;
+}
+
+.input-balcao {
+  padding: 15px;
+  font-size: 1.1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.lista-itens-balcao {
+  flex: 1;
+  overflow-y: auto;
+  border-bottom: 2px dashed #ddd;
+  margin-bottom: 10px;
+}
+
+.item-balcao {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.total-balcao { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; }
+
+.select-balcao { width: 100%; padding: 10px; margin-bottom: 10px; }
+
+.btn-lancar {
+  width: 100%;
+  padding: 20px;
+  background: #10b981;
+  color: white;
+  font-weight: 900;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-voltar-cozinha {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  background: #ddd;
+  border: none;
+  cursor: pointer;
+}

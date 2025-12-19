@@ -9,6 +9,7 @@ import Cozinha from './pages/Cozinha';
 import MeusPedidos from './pages/MeusPedidos';
 import Navbar from './components/Navbar';
 import PedidoSucesso from './pages/PedidoSucesso';
+import Balcao from './pages/Balcao';
 
 // 1. IMPORTE O RODAPÉ AQUI
 import Rodape from './components/Rodape'; // (Ou './Rodape' se não criou a pasta components)
@@ -27,6 +28,7 @@ function App() {
           <Route path="/cozinha" element={<Cozinha />} />
           <Route path="/pedidos" element={<MeusPedidos />} />
           <Route path="/sucesso" element={<PedidoSucesso />} />
+          <Route path="/balcao" element={<Balcao />} />
         </Routes>
 
         {/* 2. COLOQUE O RODAPÉ AQUI NO FINAL */}

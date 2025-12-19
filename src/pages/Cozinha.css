@@ -443,3 +443,52 @@
     background: none !important; /* Remove cor de fundo pra economizar tinta */
   }
 }
+
+/* ... (todo o css anterior) ... */
+
+/* Estilo do Botão Cancelar */
+.btn-cancelar {
+  background-color: #ef4444; /* Vermelho Alerta */
+  color: white;
+}
+
+.btn-cancelar:hover {
+  background-color: #dc2626;
+  box-shadow: 0 0 5px rgba(220, 38, 38, 0.5);
+}
+
+/* Ajuste no Flexbox para caber 3 botões */
+.pedido-acoes {
+  gap: 5px; /* Diminui um pouco o espaço entre eles */
+}
+
+.pedido-acoes button {
+  font-size: 0.9rem; /* Diminui um tiquinho a letra pra caber */
+  padding: 10px 5px;
+}
+
+/* Botão para ir ao Balcão */
+.btn-ir-balcao {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+/* Diferenciação Visual do Card Balcão */
+.card-retirada {
+  border-left: 8px solid #3b82f6 !important; /* Azul em vez de amarelo */
+  background-color: #eff6ff;
+}
+
+.tag-retirada {
+  background-color: #3b82f6;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
