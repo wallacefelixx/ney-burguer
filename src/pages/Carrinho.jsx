@@ -28,12 +28,11 @@ const Carrinho = () => {
   const [pixCopiado, setPixCopiado] = useState(false);
 
   // Formata telefone
-  const handleTelefoneChange = (e) => {
-    let value = e.target.value.replace(/\D/g, "");
-    value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
-    value = value.replace(/(\d)(\d{4})$/, "$1-$2");
-    setTelefoneInput(value); // Nota: Corrigi o nome da função aqui embaixo na hora de usar
-    setTelefone(value);
+const handleTelefoneChange = (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // Remove letras
+    value = value.replace(/^(\d{2})(\d)/g, "($1) $2"); // Add DDD
+    value = value.replace(/(\d)(\d{4})$/, "$1-$2"); // Add hífen
+    setTelefone(value); // Agora usa a variável certa!
   };
 
   const handleCopyPix = () => {

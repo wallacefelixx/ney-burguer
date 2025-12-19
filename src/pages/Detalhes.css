@@ -1,137 +1,229 @@
-/* src/pages/Detalhes.css */
-
+/* --- CONFIGURAÇÕES GERAIS --- */
 .detalhes-container {
-  background-color: #fff;
-  min-height: 100vh;
-  padding-bottom: 100px; /* IMPORTANTE: Espaço para a barra fixa não cobrir o texto */
-  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  padding-bottom: 100px; /* Espaço extra para não esconder o botão no celular */
 }
 
-/* Botão Voltar (flutuante sobre a foto) */
-.btn-voltar {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+/* --- BOTÃO VOLTAR --- */
+.btn-voltar-topo {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  margin-bottom: 15px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 20px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  cursor: pointer;
-  z-index: 10;
+  gap: 5px;
+  transition: color 0.2s;
 }
 
-/* Foto do Topo */
-.detalhes-img {
-  width: 100%;
-  height: 250px;
-  object-fit: cover;
+.btn-voltar-topo:hover {
+  color: #FBBF24;
 }
 
-/* Conteúdo (Texto) */
-.detalhes-info {
+/* --- LAYOUT DO CONTEÚDO --- */
+.detalhes-content {
+  display: flex;
+  gap: 40px;
+  background: #fff;
+  border-radius: 16px;
+  /* Sombra suave para destacar do fundo */
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
   padding: 20px;
+  overflow: hidden;
 }
 
-.detalhes-titulo {
-  font-family: 'Arial Black', sans-serif; /* Fonte gordinha */
-  font-size: 24px;
+/* --- IMAGEM DO PRODUTO --- */
+.detalhes-img {
+  flex: 1; /* Ocupa metade no PC */
+  min-width: 300px;
+}
+
+.detalhes-img img {
+  width: 100%;
+  height: 100%;
+  max-height: 400px; /* Limite de altura */
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* --- INFORMAÇÕES DO PRODUTO --- */
+.detalhes-info {
+  flex: 1; /* Ocupa a outra metade */
+  display: flex;
+  flex-direction: column;
+}
+
+.detalhes-info h1 {
+  font-family: 'Arial Black', sans-serif; /* Fonte robusta */
+  font-size: 2rem;
+  margin: 0 0 10px 0;
+  color: #1a1a1a;
+  line-height: 1.1;
   text-transform: uppercase;
-  margin-bottom: 5px;
-  line-height: 1;
 }
 
-.detalhes-desc {
-  font-size: 14px;
+.desc {
   color: #666;
-  margin-bottom: 10px;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
 }
 
-.detalhes-preco {
-  font-size: 28px;
+/* --- PREÇO DOURADO (Destaque) --- */
+.preco {
+  font-size: 2.5rem; /* Bem grande */
+  color: #d4a017; /* Dourado escuro para leitura */
   font-weight: 900;
-  color: #d4a017; /* O Dourado/Amarelo do preço */
-  margin-bottom: 20px;
+  margin: 10px 0 25px 0;
   text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
 }
 
-/* Área de Observação */
-.label-obs {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
+/* --- CAIXA DE OBSERVAÇÃO --- */
+.observacoes {
+  margin-bottom: 25px;
+  width: 100%;
 }
 
-.input-obs {
+.observacoes label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #444;
+  font-size: 0.9rem;
+}
+
+.observacoes textarea {
   width: 100%;
   height: 100px;
-  background-color: #e0e0e0; /* Fundo cinza igual do print */
-  border: none;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 14px;
-  resize: none;
+  padding: 15px;
+  background-color: #f3f4f6; /* Fundo cinza claro moderno */
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: none; /* Não deixa esticar e quebrar o layout */
+  box-sizing: border-box; /* Garante que o padding não estoure a largura */
+  transition: 0.3s;
 }
 
-/* Barra Inferior Fixa */
-.barra-fixa {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #e0e0e0; /* Fundo cinza da barra */
-  padding: 15px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-  z-index: 50;
+.observacoes textarea:focus {
+  outline: none;
+  background-color: #fff;
+  border-color: #FBBF24; /* Borda amarela ao digitar */
 }
 
-/* Contador (- 1 +) */
-.contador {
+/* --- CONTROLES (Contador + Botão) --- */
+/* No PC, fica normal abaixo da obs */
+.controles {
   display: flex;
   align-items: center;
   gap: 15px;
+  margin-top: auto; /* Empurra para o final */
 }
 
-.btn-qtd {
+.contador {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #e5e7eb;
+  padding: 5px;
+  border-radius: 8px;
+}
+
+.contador button {
   width: 45px;
   height: 45px;
-  border-radius: 50%;
-  background-color: #5c5c68; /* Cinza escuro do botão */
-  color: white;
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
-
-.numero-qtd {
-  font-size: 22px;
-  font-weight: bold;
-}
-
-/* Botão Adicionar (Amarelo) */
-.btn-adicionar {
-  background-color: #FBBF24; /* Amarelo Ney Burguer */
-  color: #000;
-  border: 1px solid #000;
-  padding: 0 20px;
-  height: 50px;
+  background: #fff;
+  border: none;
   border-radius: 6px;
+  font-size: 1.5rem;
   font-weight: bold;
-  font-size: 16px;
-  flex: 1; /* Ocupa o resto do espaço */
-  margin-left: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  cursor: pointer;
+  color: #1a1a1a;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.contador span {
+  width: 30px;
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+/* --- BOTÃO ADICIONAR (Grande e Chamativo) --- */
+.btn-add-carrinho {
+  flex: 1; /* Ocupa todo o espaço restante */
+  background-color: #10b981; /* Verde "Comprar" (Melhor conversão que amarelo) */
+  color: white;
+  border: none;
+  padding: 0 20px;
+  height: 55px; /* Botão alto */
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: transform 0.2s, background-color 0.2s;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  white-space: nowrap; /* Não quebra o texto */
+}
+
+.btn-add-carrinho:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
+}
+
+.btn-add-carrinho:active {
+  transform: scale(0.98);
+}
+
+
+/* --- RESPONSIVIDADE (CELULAR) --- */
+@media (max-width: 768px) {
+  .detalhes-container {
+    padding: 10px;
+    padding-bottom: 90px; /* Espaço para a barra fixa */
+  }
+
+  .detalhes-content {
+    flex-direction: column; /* Imagem em cima, texto embaixo */
+    gap: 15px;
+    padding: 15px;
+    border-radius: 0 0 16px 16px; /* Arredonda só embaixo no mobile */
+  }
+
+  .detalhes-img img {
+    height: 250px; /* Altura fixa no celular */
+  }
+
+  .detalhes-info h1 {
+    font-size: 1.6rem;
+  }
+
+  .preco {
+    font-size: 2rem;
+    margin: 5px 0 15px 0;
+  }
+
+  /* BARRA FIXA NO CELULAR */
+  /* Transforma a div .controles em uma barra fixa no fundo */
+  .controles {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    padding: 15px 20px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15); /* Sombra forte pra cima */
+    z-index: 1000;
+    margin: 0;
+    border-top: 1px solid #eee;
+  }
 }
