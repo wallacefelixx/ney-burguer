@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { cardapio } from '../data/menu';
 import './Home.css';
-import BarraCarrinho from '../components/BarraCarrinho';
+// Importação CORRETA (apenas uma vez)
+import { cardapio } from '../data/cardapio';
+import BarraCarrinho from '../components/BarraCarrinho'; // Ou SacolaFlutuante, dependendo de qual você escolheu usar
 
 const Home = () => {
   const navigate = useNavigate();
   const [categoriaAtiva, setCategoriaAtiva] = useState('Todas');
   
-  const categorias = ["Todas", "Tradicionais", "Artesanais", "Pizzas", "Bebidas", "Combos"];
+  // Lista de categorias para o filtro
+  const categorias = ["Todas", "Tradicionais", "Artesanais", "Combos", "Pizzas", "Bebidas"];
 
+  // Lógica de Filtro
   const produtosFiltrados = categoriaAtiva === 'Todas' 
     ? cardapio 
     : cardapio.filter(p => p.categoria === categoriaAtiva);
 
   return (
-    <div>
+    <div className="home-container">
       {/* Cabeçalho */}
        <header className="header">
             <div className="topo-header">
@@ -25,11 +28,11 @@ const Home = () => {
               
               {/* Link para Meus Pedidos */}
               <button className="btn-meus-pedidos" onClick={() => navigate('/pedidos')}>
-                🕒 Pedidos
+                🕒 Meus Pedidos
               </button>
             </div>
         
-        {/* Categorias coladas no header */}
+        {/* Categorias (Scroll Horizontal) */}
         <div className="categorias-container">
           <div className="categorias-scroll">
             {categorias.map(cat => (
@@ -45,10 +48,10 @@ const Home = () => {
         </div>
       </header>
 
-      {/* Banner */}
+      {/* Banner Promocional */}
       <div className="banner-container">
         <div className="banner-promocao">
-          🔥 Mega Descontão 🔥
+          🔥 <strong>Oferta do Dia:</strong> Entrega Grátis acima de R$ 50!
         </div>
       </div>
 
@@ -56,25 +59,32 @@ const Home = () => {
       <div className="lista-produtos">
         <h2 className="titulo-secao">{categoriaAtiva}</h2>
 
-        {produtosFiltrados.map(produto => (
-          <div 
-            key={produto.id} 
-            className="produto-card"
-            onClick={() => navigate(`/produto/${produto.id}`)}
-          >
-            <div className="produto-info">
-              <h3 className="produto-nome">{produto.nome}</h3>
-              <p className="produto-desc">{produto.descricao}</p>
-              <p className="produto-preco">
-                R$ {produto.preco.toFixed(2).replace('.', ',')}
-              </p>
-            </div>
+        {produtosFiltrados.length === 0 ? (
+          <p className="aviso-vazio">Nenhum produto nesta categoria.</p>
+        ) : (
+          produtosFiltrados.map(produto => (
+            <div 
+              key={produto.id} 
+              className="produto-card"
+              onClick={() => navigate(`/produto/${produto.id}`)}
+            >
+              <div className="produto-info">
+                <h3 className="produto-nome">{produto.nome}</h3>
+                <p className="produto-desc">{produto.descricao}</p>
+                <p className="produto-preco">
+                  R$ {produto.preco.toFixed(2).replace('.', ',')}
+                </p>
+              </div>
 
-            <img src={produto.imagem} alt={produto.nome} className="produto-img" />
-          </div>
-        ))}
+              <div className="produto-img-wrapper">
+                 <img src={produto.imagem} alt={produto.nome} className="produto-img" />
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
+      {/* Barra de Carrinho Flutuante (Rodapé) */}
       <BarraCarrinho />
 
     </div>

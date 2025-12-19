@@ -90,7 +90,7 @@ const Carrinho = () => {
     try {
       await addDoc(collection(db, "pedidos"), payloadPedido);
       clearCart();
-      navigate('/pedidos'); // Manda para a tela de rastreio
+      navigate('/sucesso', { state: { pagamento: infoPagamento } }); // Envia para a tela de sucesso, passando a info se foi PIX ou não
     } catch (error) {
       console.error("Erro ao enviar:", error);
       alert("Erro ao enviar pedido. Tente novamente.");
