@@ -23,9 +23,7 @@
   transition: color 0.2s;
 }
 
-.btn-voltar-topo:hover {
-  color: #FBBF24;
-}
+.btn-voltar-topo:hover { color: #FBBF24; }
 
 /* --- LAYOUT DO CONTEÚDO --- */
 .detalhes-content {
@@ -33,99 +31,44 @@
   gap: 40px;
   background: #fff;
   border-radius: 16px;
-  /* Sombra suave para destacar do fundo */
   box-shadow: 0 5px 20px rgba(0,0,0,0.05);
   padding: 20px;
   overflow: hidden;
 }
 
-/* --- IMAGEM DO PRODUTO --- */
-.detalhes-img {
-  flex: 1; /* Ocupa metade no PC */
-  min-width: 300px;
-}
+/* --- IMAGEM E INFO --- */
+.detalhes-img { flex: 1; min-width: 300px; }
+.detalhes-img img { width: 100%; height: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; }
 
-.detalhes-img img {
-  width: 100%;
-  height: 100%;
-  max-height: 400px; /* Limite de altura */
-  object-fit: cover;
-  border-radius: 12px;
-}
-
-/* --- INFORMAÇÕES DO PRODUTO --- */
-.detalhes-info {
-  flex: 1; /* Ocupa a outra metade */
-  display: flex;
-  flex-direction: column;
-}
-
-.detalhes-info h1 {
-  font-family: 'Arial Black', sans-serif; /* Fonte robusta */
-  font-size: 2rem;
-  margin: 0 0 10px 0;
-  color: #1a1a1a;
-  line-height: 1.1;
-  text-transform: uppercase;
-}
-
-.desc {
-  color: #666;
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 15px;
-}
+.detalhes-info { flex: 1; display: flex; flex-direction: column; }
+.detalhes-info h1 { font-family: 'Arial Black', sans-serif; font-size: 2rem; margin: 0 0 10px 0; color: #1a1a1a; line-height: 1.1; text-transform: uppercase; }
+.desc { color: #666; font-size: 1rem; line-height: 1.6; margin-bottom: 15px; }
 
 /* --- PREÇO DOURADO (Destaque) --- */
 .preco {
-  font-size: 2.5rem; /* Bem grande */
-  color: #d4a017; /* Dourado escuro para leitura */
+  font-size: 2.5rem;
+  color: #d4a017;
   font-weight: 900;
   margin: 10px 0 25px 0;
   text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
 }
 
 /* --- CAIXA DE OBSERVAÇÃO --- */
-.observacoes {
-  margin-bottom: 25px;
-  width: 100%;
-}
-
-.observacoes label {
-  display: block;
-  font-weight: 700;
-  margin-bottom: 8px;
-  color: #444;
-  font-size: 0.9rem;
-}
-
+.observacoes { margin-bottom: 25px; width: 100%; }
+.observacoes label { display: block; font-weight: 700; margin-bottom: 8px; color: #444; font-size: 0.9rem; }
 .observacoes textarea {
-  width: 100%;
-  height: 100px;
-  padding: 15px;
-  background-color: #f3f4f6; /* Fundo cinza claro moderno */
-  border: 2px solid #e5e7eb;
-  border-radius: 10px;
-  font-family: inherit;
-  font-size: 0.95rem;
-  resize: none; /* Não deixa esticar e quebrar o layout */
-  box-sizing: border-box; /* Garante que o padding não estoure a largura */
-  transition: 0.3s;
+  width: 100%; height: 100px; padding: 15px;
+  background-color: #f3f4f6; border: 2px solid #e5e7eb; border-radius: 10px;
+  font-family: inherit; font-size: 0.95rem; resize: none; box-sizing: border-box; transition: 0.3s;
 }
+.observacoes textarea:focus { outline: none; background-color: #fff; border-color: #FBBF24; }
 
-.observacoes textarea:focus {
-  outline: none;
-  background-color: #fff;
-  border-color: #FBBF24; /* Borda amarela ao digitar */
-}
-
-/* --- CONTROLES (Contador + Botão) --- */
-/* No PC, fica normal abaixo da obs */
+/* --- CONTROLES (BARRA DE COMPRA) --- */
 .controles {
   display: flex;
   align-items: center;
   gap: 15px;
-  margin-top: auto; /* Empurra para o final */
+  margin-top: auto;
 }
 
 .contador {
@@ -138,82 +81,34 @@
 }
 
 .contador button {
-  width: 45px;
-  height: 45px;
-  background: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 1.5rem;
-  font-weight: bold;
-  cursor: pointer;
-  color: #1a1a1a;
+  width: 45px; height: 45px;
+  background: #fff; border: none; border-radius: 6px;
+  font-size: 1.5rem; font-weight: bold; cursor: pointer; color: #1a1a1a;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.contador span {
-  width: 30px;
-  text-align: center;
-  font-size: 1.3rem;
-  font-weight: bold;
-}
+.contador span { width: 30px; text-align: center; font-size: 1.3rem; font-weight: bold; }
 
-/* --- BOTÃO ADICIONAR (Grande e Chamativo) --- */
 .btn-add-carrinho {
-  flex: 1; /* Ocupa todo o espaço restante */
-  background-color: #10b981; /* Verde "Comprar" (Melhor conversão que amarelo) */
-  color: white;
-  border: none;
-  padding: 0 20px;
-  height: 55px; /* Botão alto */
-  border-radius: 10px;
-  font-size: 1.1rem;
-  font-weight: 800;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: transform 0.2s, background-color 0.2s;
+  flex: 1;
+  background-color: #10b981;
+  color: white; border: none; padding: 0 20px; height: 55px;
+  border-radius: 10px; font-size: 1.1rem; font-weight: 800; cursor: pointer;
+  text-transform: uppercase; transition: transform 0.2s;
   box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
-  white-space: nowrap; /* Não quebra o texto */
+  white-space: nowrap;
 }
-
-.btn-add-carrinho:hover {
-  background-color: #059669;
-  transform: translateY(-2px);
-}
-
-.btn-add-carrinho:active {
-  transform: scale(0.98);
-}
-
+.btn-add-carrinho:active { transform: scale(0.98); }
 
 /* --- RESPONSIVIDADE (CELULAR) --- */
 @media (max-width: 768px) {
-  .detalhes-container {
-    padding: 10px;
-    padding-bottom: 90px; /* Espaço para a barra fixa */
-  }
+  .detalhes-container { padding: 10px; padding-bottom: 90px; }
+  .detalhes-content { flex-direction: column; gap: 15px; padding: 15px; border-radius: 0 0 16px 16px; }
+  .detalhes-img img { height: 250px; }
+  .detalhes-info h1 { font-size: 1.6rem; }
+  .preco { font-size: 2rem; margin: 5px 0 15px 0; }
 
-  .detalhes-content {
-    flex-direction: column; /* Imagem em cima, texto embaixo */
-    gap: 15px;
-    padding: 15px;
-    border-radius: 0 0 16px 16px; /* Arredonda só embaixo no mobile */
-  }
-
-  .detalhes-img img {
-    height: 250px; /* Altura fixa no celular */
-  }
-
-  .detalhes-info h1 {
-    font-size: 1.6rem;
-  }
-
-  .preco {
-    font-size: 2rem;
-    margin: 5px 0 15px 0;
-  }
-
-  /* BARRA FIXA NO CELULAR */
-  /* Transforma a div .controles em uma barra fixa no fundo */
+  /* BARRA FIXA NO RODAPÉ */
   .controles {
     position: fixed;
     bottom: 0;
@@ -221,9 +116,10 @@
     width: 100%;
     background-color: #fff;
     padding: 15px 20px;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.15); /* Sombra forte pra cima */
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
     z-index: 1000;
     margin: 0;
     border-top: 1px solid #eee;
+    box-sizing: border-box; /* Garante que não estoure a tela */
   }
 }

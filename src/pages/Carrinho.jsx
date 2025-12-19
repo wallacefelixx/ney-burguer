@@ -11,7 +11,7 @@ const Carrinho = () => {
   const { cartItems, cartTotal, removeFromCart, clearCart } = useCart();
   const navigate = useNavigate();
 
-  // Variáveis adaptadas
+  // Variáveis para facilitar leitura
   const carrinho = cartItems;
   const total = cartTotal;
 
@@ -21,18 +21,19 @@ const Carrinho = () => {
   const [endereco, setEndereco] = useState('');
   const [formaPagamento, setFormaPagamento] = useState('dinheiro');
   
-  // Novos Estados para o Troco
+  // Estados para Troco
   const [precisaTroco, setPrecisaTroco] = useState(false);
   const [valorTroco, setValorTroco] = useState('');
 
+  // Estado visual do botão de copiar PIX
   const [pixCopiado, setPixCopiado] = useState(false);
 
-  // Formata telefone
-const handleTelefoneChange = (e) => {
-    let value = e.target.value.replace(/\D/g, ""); // Remove letras
-    value = value.replace(/^(\d{2})(\d)/g, "($1) $2"); // Add DDD
-    value = value.replace(/(\d)(\d{4})$/, "$1-$2"); // Add hífen
-    setTelefone(value); // Agora usa a variável certa!
+  // Formata o telefone e atualiza o estado correto
+  const handleTelefoneChange = (e) => {
+    let value = e.target.value.replace(/\D/g, "");
+    value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
+    value = value.replace(/(\d)(\d{4})$/, "$1-$2");
+    setTelefone(value);
   };
 
   const handleCopyPix = () => {
@@ -44,7 +45,7 @@ const handleTelefoneChange = (e) => {
   const finalizarPedido = async () => {
     if (carrinho.length === 0) return;
     
-    // Validação Básica
+    // Validação
     if (!nomeCliente.trim() || !endereco.trim() || !telefone.trim()) {
       alert("⚠️ Por favor, preencha todos os dados de entrega.");
       return;
@@ -55,7 +56,7 @@ const handleTelefoneChange = (e) => {
       return;
     }
 
-    // Validação do Troco
+    // Formata a string do pagamento
     let infoPagamento = formaPagamento;
     if (formaPagamento === 'dinheiro') {
       if (precisaTroco) {
@@ -89,7 +90,7 @@ const handleTelefoneChange = (e) => {
     try {
       await addDoc(collection(db, "pedidos"), payloadPedido);
       clearCart();
-      navigate('/pedidos');
+      navigate('/pedidos'); // Manda para a tela de rastreio
     } catch (error) {
       console.error("Erro ao enviar:", error);
       alert("Erro ao enviar pedido. Tente novamente.");
@@ -132,7 +133,6 @@ const handleTelefoneChange = (e) => {
       <div className="formulario-entrega">
         <h3>📍 Dados de Entrega</h3>
         
-        {/* Grid para alinhar Nome e Telefone */}
         <div className="form-grid">
             <div className="form-grupo">
                 <label>Seu Nome</label>
@@ -182,7 +182,7 @@ const handleTelefoneChange = (e) => {
           </select>
         </div>
 
-        {/* --- LÓGICA DO DINHEIRO E TROCO --- */}
+        {/* Lógica Troco */}
         {formaPagamento === 'dinheiro' && (
           <div className="area-troco fade-in">
             <p className="label-troco">Vai precisar de troco?</p>
@@ -216,7 +216,7 @@ const handleTelefoneChange = (e) => {
           </div>
         )}
 
-        {/* --- LÓGICA DO PIX --- */}
+        {/* Lógica PIX */}
         {formaPagamento === 'pix' && (
           <div className="pix-area fade-in">
             <div className="pix-alerta">

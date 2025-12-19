@@ -1,4 +1,6 @@
-/* Layout Geral */
+/* =========================================
+   LAYOUT GERAL E ESTRUTURA
+   ========================================= */
 .cozinha-container {
   background-color: #f0f2f5;
   min-height: 100vh;
@@ -6,6 +8,7 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Cabeçalho Branco */
 .cozinha-header {
   display: flex;
   justify-content: space-between;
@@ -23,7 +26,31 @@
   color: #333;
 }
 
-/* Abas de Navegação */
+.titulo-logout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.btn-sair {
+  background: transparent;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  padding: 5px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+  margin-left: 15px;
+}
+
+.btn-sair:hover {
+  background-color: #ef4444;
+  color: white;
+}
+
+/* Abas de Navegação (Fila vs Histórico) */
 .abas-controle {
   display: flex;
   gap: 10px;
@@ -46,20 +73,33 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* === TELA 1: CARDS DA COZINHA === */
+/* =========================================
+   TELA 1: CARDS DA COZINHA (PENDENTES)
+   ========================================= */
 .lista-pedidos-cozinha {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
 }
 
+.aviso-vazio {
+  width: 100%;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  margin-top: 50px;
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+}
+
 .card-pedido-cozinha {
   background-color: #fff;
-  width: 300px;
+  width: 300px; /* Largura fixa do cartão */
   border-radius: 8px;
   padding: 15px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  border-left: 8px solid #FBBF24;
+  border-left: 8px solid #FBBF24; /* Faixa amarela lateral */
   display: flex;
   flex-direction: column;
 }
@@ -74,17 +114,12 @@
   padding-bottom: 5px;
 }
 
-.pedido-tipo-entrega {
-  background-color: #e0f2fe;
-  color: #0369a1;
-  text-align: center;
-  font-weight: bold;
-  padding: 4px;
-  border-radius: 4px;
-  margin-bottom: 10px;
-  font-size: 12px;
+.hora-pedido {
+  color: #666;
+  font-size: 0.9rem;
 }
 
+/* Dados do Cliente no Cartão */
 .pedido-info-cliente {
   font-size: 13px;
   color: #555;
@@ -94,15 +129,50 @@
   border-radius: 4px;
 }
 
-.obs-destaque {
-  background-color: #fee2e2;
-  color: #991b1b;
-  padding: 0 4px;
-  border-radius: 2px;
+.pedido-info-cliente p {
+  margin: 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+.cliente-nome {
+  font-weight: bold;
+  color: #000;
+  display: flex;
+  align-items: center;
+}
+
+/* Lista de Itens */
+.pedido-itens-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1; /* Ocupa espaço disponível */
+}
+
+.pedido-itens-lista li {
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.pedido-itens-lista li small {
+  display: block;
+  color: #ef4444; /* Obs em vermelho */
+  font-style: italic;
+}
+
+.total-comanda {
+  margin-top: 10px;
+  font-weight: 800;
+  text-align: right;
+  font-size: 1.1rem;
+  color: #111;
+}
+
+/* Botões de Ação */
 .pedido-acoes {
-  margin-top: auto; /* Empurra botões pro final */
   display: flex;
   gap: 10px;
   margin-top: 15px;
@@ -115,12 +185,24 @@
   border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
+  transition: 0.2s;
 }
 
-.btn-imprimir { background-color: #e5e7eb; color: #374151; }
-.btn-concluir { background-color: #22c55e; color: white; }
+.btn-imprimir {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+.btn-imprimir:hover { background-color: #d1d5db; }
 
-/* === TELA 2: HISTÓRICO E RELATÓRIO === */
+.btn-concluir {
+  background-color: #22c55e;
+  color: white;
+}
+.btn-concluir:hover { background-color: #16a34a; }
+
+/* =========================================
+   TELA 2: HISTÓRICO E RELATÓRIO
+   ========================================= */
 .filtros-box {
   background: white;
   padding: 15px;
@@ -136,6 +218,7 @@
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  outline: none;
 }
 
 .btn-imprimir-relatorio {
@@ -206,53 +289,9 @@
   background-color: #f3f4f6;
 }
 
-.footer-relatorio {
-  margin-top: 50px;
-  text-align: center;
-  display: none; /* Só mostra na impressão */
-}
-
-/* === CONFIGURAÇÃO DE IMPRESSÃO (O SEGREDO) === */
-@media print {
-  /* Esconde tudo que não deve sair no papel */
-  .no-print, .cozinha-header, .filtros-box {
-    display: none !important;
-  }
-
-  body {
-    background: white;
-    -webkit-print-color-adjust: exact;
-  }
-
-  .cozinha-container {
-    padding: 0;
-    margin: 0;
-  }
-
-  /* Se estiver na aba Pendentes, imprime os cards */
-  .lista-pedidos-cozinha {
-    display: block;
-  }
-  .card-pedido-cozinha {
-    border: 1px solid #000;
-    box-shadow: none;
-    margin-bottom: 20px;
-    page-break-inside: avoid;
-    width: 100%;
-  }
-
-  /* Se estiver na aba Histórico, imprime o relatório */
-  .area-relatorio-print {
-    box-shadow: none;
-    padding: 0;
-  }
-
-  .footer-relatorio {
-    display: block;
-  }
-}
-
-/* Login Simples */
+/* =========================================
+   TELA DE LOGIN
+   ========================================= */
 .login-container {
   height: 100vh;
   display: flex;
@@ -268,25 +307,30 @@
   text-align: center;
   width: 90%;
   max-width: 350px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
+
+.login-box h2 { margin-bottom: 20px; }
 
 .login-box input {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin: 15px 0;
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 16px;
+  box-sizing: border-box;
 }
 
 .login-box button {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background-color: #FBBF24;
   border: none;
   font-weight: bold;
   cursor: pointer;
   border-radius: 5px;
+  font-size: 1rem;
 }
 
 .msg-erro {
@@ -295,49 +339,107 @@
   font-size: 14px;
 }
 
-.titulo-logout {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.btn-sair {
-  background: transparent;
-  border: 1px solid #fff;
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-/* Etiquetas de Fidelidade */
+/* =========================================
+   BADGES DE FIDELIDADE
+   ========================================= */
 .badge-cliente {
-  font-size: 0.8rem;
-  padding: 4px 8px;
+  font-size: 0.75rem;
+  padding: 2px 6px;
   border-radius: 4px;
   font-weight: bold;
-  margin-left: 10px;
+  margin-left: 8px;
   display: inline-block;
   vertical-align: middle;
+  text-transform: uppercase;
 }
 
 /* Cliente Novo (Verde) */
 .badge-novo {
-  background-color: #059669; /* Verde esmeralda */
+  background-color: #059669;
   color: white;
   border: 1px solid #047857;
 }
 
 /* Cliente Fiel (Dourado/Laranja) */
 .badge-fiel {
-  background-color: #FBBF24; /* O Amarelo da marca */
+  background-color: #FBBF24;
   color: #1a1a1a;
   border: 1px solid #d97706;
 }
 
-.badge-loading {
-  font-size: 0.8rem;
-  color: #666;
-  margin-left: 5px;
+/* =========================================
+   ESTILOS DE IMPRESSÃO (IMPORTANTE!)
+   ========================================= */
+
+/* Por padrão, a área do cupom fiscal fica escondida */
+.area-cupom-print {
+  display: none;
+}
+
+@media print {
+  /* 1. Esconde tudo o que for marcado como no-print */
+  /* (Header, Botões, Filtros, Abas) */
+  .no-print {
+    display: none !important;
+  }
+  
+  /* 2. Configurações gerais de papel */
+  body, html {
+    background: white;
+    margin: 0;
+    padding: 0;
+    height: auto;
+    width: 100%;
+  }
+
+  .cozinha-container {
+    padding: 0;
+    margin: 0;
+    background: white;
+  }
+
+  /* === CENÁRIO A: IMPRIMIR CUPOM INDIVIDUAL === */
+  /* Se a área do cupom estiver visível (pela lógica do React), formatamos ela */
+  .area-cupom-print {
+    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: 300px; /* Tamanho padrão de impressora térmica */
+    font-family: 'Courier New', Courier, monospace; /* Fonte monoespaçada */
+    font-size: 12px;
+    color: black;
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Se o cupom estiver visível, escondemos o resto da página explicitamente */
+  .area-cupom-print ~ * {
+    display: none !important;
+  }
+
+  .cupom-header, .cupom-total {
+    text-align: center;
+  }
+  
+  /* === CENÁRIO B: IMPRIMIR RELATÓRIO DE VENDAS === */
+  /* Se não tiver cupom, mas tiver a área de relatório, ela aparece */
+  .area-relatorio-print {
+    display: block;
+    box-shadow: none;
+    padding: 0;
+    border: none;
+  }
+
+  .tabela-historico th, .tabela-historico td {
+    border: 1px solid #000; /* Borda preta sólida para impressão nítida */
+    color: #000;
+  }
+
+  .card-resumo {
+    border: 1px solid #000;
+    color: #000;
+    background: none !important; /* Remove cor de fundo pra economizar tinta */
+  }
 }

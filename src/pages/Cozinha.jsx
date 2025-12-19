@@ -15,7 +15,6 @@ const BadgeFidelidade = ({ telefone }) => {
         const snapshot = await getCountFromServer(q);
         setTotalPedidos(snapshot.data().count);
       } catch (error) {
-        console.error("Erro ao contar pedidos:", error);
         setTotalPedidos(0);
       }
     }
@@ -25,8 +24,7 @@ const BadgeFidelidade = ({ telefone }) => {
   if (totalPedidos === null) return <span className="badge-loading">...</span>;
 
   const estilo = totalPedidos === 1 ? 'badge-novo' : 'badge-fiel';
-  const texto = totalPedidos === 1 ? '🌟 1º Pedido' : `🏆 ${totalPedidos}º Pedido`;
-
+  const texto = totalPedidos === 1 ? '🌟 1º' : `🏆 ${totalPedidos}º`;
   return <span className={`badge-cliente ${estilo}`}>{texto}</span>;
 };
 
@@ -35,11 +33,13 @@ const Cozinha = () => {
   const [estaLogado, setEstaLogado] = useState(false);
   const [senhaInput, setSenhaInput] = useState('');
   const [erroSenha, setErroSenha] = useState('');
-
   const [pedidos, setPedidos] = useState([]);
   const [abaAtiva, setAbaAtiva] = useState('pendentes');
   const [filtroPeriodo, setFiltroPeriodo] = useState('hoje');
   const [dataSelecionada, setDataSelecionada] = useState(new Date().toISOString().split('T')[0]);
+
+  // Estado para controlar qual pedido está sendo impresso
+  const [pedidoParaImprimir, setPedidoParaImprimir] = useState(null);
 
   useEffect(() => {
     const loginSalvo = localStorage.getItem('cozinhaLogada');
@@ -48,7 +48,8 @@ const Cozinha = () => {
 
   useEffect(() => {
     if (!estaLogado) return;
-    const q = query(collection(db, "pedidos"), orderBy("data_timestamp", "desc"));
+    // Ordena por 'asc' (Antigos primeiro -> FIFO)
+    const q = query(collection(db, "pedidos"), orderBy("data_timestamp", "asc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setPedidos(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
@@ -77,7 +78,16 @@ const Cozinha = () => {
     }
   };
 
-  const imprimirPedidoIndividual = () => window.print();
+  // Função para imprimir cupom individual
+  const handleImprimir = (pedido) => {
+    setPedidoParaImprimir(pedido);
+    // Pequeno delay para o React renderizar o cupom antes de abrir a janela de print
+    setTimeout(() => {
+        window.print();
+        setPedidoParaImprimir(null); // Limpa após fechar a janela de impressão
+    }, 500);
+  };
+
   const imprimirRelatorio = () => window.print();
 
   const filtrarPedidosHistorico = () => {
@@ -88,7 +98,8 @@ const Cozinha = () => {
       const [ano, mes, dia] = dataSelecionada.split('-');
       lista = lista.filter(p => p.data.includes(`${dia}/${mes}/${ano}`));
     }
-    return lista;
+    // Inverte para mostrar o último concluído no topo da lista
+    return lista.reverse();
   };
 
   const pedidosPendentes = pedidos.filter(p => p.status === 'Pendente');
@@ -112,6 +123,43 @@ const Cozinha = () => {
 
   return (
     <div className="cozinha-container">
+      
+      {/* --- ÁREA INVISÍVEL DE IMPRESSÃO (CUPOM FISCAL) --- */}
+      {pedidoParaImprimir && (
+        <div className="area-cupom-print">
+            <div className="cupom-header">
+                <h2>NEY BURGUER</h2>
+                <p>================================</p>
+                <p>PEDIDO #{pedidoParaImprimir.id.slice(-4)}</p>
+                <p>{pedidoParaImprimir.data}</p>
+                <p>================================</p>
+            </div>
+            <div className="cupom-cliente">
+                <p><strong>Cliente:</strong> {pedidoParaImprimir.cliente}</p>
+                <p><strong>Fone:</strong> {pedidoParaImprimir.telefone}</p>
+                <p><strong>Endereço:</strong> {pedidoParaImprimir.endereco}</p>
+                <p><strong>Pagamento:</strong> {pedidoParaImprimir.pagamento}</p>
+            </div>
+            <p>--------------------------------</p>
+            <div className="cupom-itens">
+                {pedidoParaImprimir.itens.map((item, idx) => (
+                    <div key={idx} style={{marginBottom: '5px'}}>
+                        <div>{item.quantidade}x {item.nome}</div>
+                        {item.obs && <small>{'>>'} {item.obs}</small>}
+                        <div style={{textAlign: 'right'}}>R$ {(item.preco * item.quantidade).toFixed(2)}</div>
+                    </div>
+                ))}
+            </div>
+            <p>--------------------------------</p>
+            <div className="cupom-total">
+                <h3>TOTAL: R$ {pedidoParaImprimir.total.toFixed(2)}</h3>
+            </div>
+             <p>================================</p>
+             <p style={{textAlign:'center'}}>Obrigado pela preferência!</p>
+        </div>
+      )}
+
+      {/* --- CABEÇALHO DO SITE --- */}
       <header className="cozinha-header no-print">
         <div className="titulo-logout">
             <h1>👨‍🍳 Gestão Ney Burguer</h1>
@@ -128,7 +176,7 @@ const Cozinha = () => {
       </header>
 
       {abaAtiva === 'pendentes' && (
-        <div className="tela-cozinha">
+        <div className="tela-cozinha no-print">
           <div className="lista-pedidos-cozinha">
             {pedidosPendentes.length === 0 ? <p className="aviso-vazio">Sem pedidos pendentes...</p> : 
               pedidosPendentes.map(pedido => (
@@ -138,14 +186,12 @@ const Cozinha = () => {
                     <span className="hora-pedido">{pedido.data.split(' ')[1]}</span>
                   </div>
                   
-                  {/* --- AQUI ESTÁ A MUDANÇA PRINCIPAL --- */}
                   <div className="pedido-info-cliente">
                     <p className="cliente-nome">
                         👤 {pedido.cliente} 
-                        {/* O BADGE ENTRA AQUI DO LADO DO NOME */}
                         <BadgeFidelidade telefone={pedido.telefone} />
                     </p>
-                    <p className="cliente-fone">📞 {pedido.telefone || "Sem telefone"}</p>
+                    <p className="cliente-fone">📞 {pedido.telefone}</p>
                     <p className="cliente-end">📍 {pedido.endereco}</p>
                     <p className="cliente-pag">💰 {pedido.pagamento}</p>
                   </div>
@@ -161,8 +207,8 @@ const Cozinha = () => {
                     Total: R$ {pedido.total.toFixed(2)}
                   </div>
 
-                  <div className="pedido-acoes no-print">
-                    <button className="btn-imprimir" onClick={imprimirPedidoIndividual}>🖨️ Imprimir</button>
+                  <div className="pedido-acoes">
+                    <button className="btn-imprimir" onClick={() => handleImprimir(pedido)}>🖨️ Imprimir</button>
                     <button className="btn-concluir" onClick={() => concluirPedido(pedido.id)}>✅ Pronto</button>
                   </div>
                 </div>
@@ -183,10 +229,10 @@ const Cozinha = () => {
                 <button className="btn-imprimir-relatorio" onClick={imprimirRelatorio}>Relatório</button>
             </div>
             <div className="area-relatorio-print">
-                 <h2>Relatório de Vendas</h2>
+                 <div className="cabecalho-relatorio"><h2>Relatório de Vendas</h2></div>
                  <div className="resumo-cards">
                     <div className="card-resumo"><span>Pedidos</span><strong>{historicoFiltrado.length}</strong></div>
-                    <div className="card-resumo destaque"><span>Faturamento</span><strong>R$ {totalFaturamento.toFixed(2)}</strong></div>
+                    <div className="card-resumo destaque"><span>Faturamento</span><strong>R$ {totalFaturamento.toFixed(2).replace('.', ',')}</strong></div>
                  </div>
                  <table className="tabela-historico">
                     <thead><tr><th>Hora</th><th>Cliente</th><th>Total</th></tr></thead>
