@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import './Cozinha.css';
 import { db } from '../firebase';
 import { collection, query, orderBy, onSnapshot, doc, updateDoc, where, getCountFromServer } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom'; // Import novo
+import { useNavigate } from 'react-router-dom';
 
 // ... (BadgeFidelidade mantido igual) ...
 const BadgeFidelidade = ({ telefone }) => {
   const [totalPedidos, setTotalPedidos] = useState(null);
   useEffect(() => {
     async function contar() {
-      if (!telefone || telefone === 'Balcão') return; // Não conta histórico de balcão genérico
+      if (!telefone || telefone === 'Balcão') return;
       const q = query(collection(db, "pedidos"), where("telefone", "==", telefone));
       try {
         const snapshot = await getCountFromServer(q);
@@ -26,7 +26,6 @@ const BadgeFidelidade = ({ telefone }) => {
 
 const Cozinha = () => {
   const navigate = useNavigate();
-  // ... (Estados de login e lista mantidos iguais) ...
   const [estaLogado, setEstaLogado] = useState(false);
   const [senhaInput, setSenhaInput] = useState('');
   const [erroSenha, setErroSenha] = useState('');
@@ -36,7 +35,6 @@ const Cozinha = () => {
   const [dataSelecionada, setDataSelecionada] = useState(new Date().toISOString().split('T')[0]);
   const [pedidoParaImprimir, setPedidoParaImprimir] = useState(null);
 
-  // ... (useEffects de login e snapshot mantidos iguais) ...
   useEffect(() => {
     const loginSalvo = localStorage.getItem('cozinhaLogada');
     if (loginSalvo === 'sim') setEstaLogado(true);
@@ -51,7 +49,6 @@ const Cozinha = () => {
     return () => unsubscribe();
   }, [estaLogado]);
 
-  // ... (Logins e Logout mantidos iguais) ...
   const handleLogin = (e) => {
     e.preventDefault();
     if (senhaInput === 'ney123') {
@@ -79,17 +76,29 @@ const Cozinha = () => {
   };
   const imprimirRelatorio = () => window.print();
 
-  // ... (Filtros mantidos iguais) ...
+  // --- CORREÇÃO AQUI ---
   const filtrarPedidosHistorico = () => {
     let lista = pedidos.filter(p => p.status === 'Concluido'); 
-    const hoje = new Date().toLocaleDateString();
-    if (filtroPeriodo === 'hoje') lista = lista.filter(p => p.data.includes(hoje));
+    
+    // Forçamos o formato DD/MM/AAAA para garantir que bate com o banco de dados
+    const dataObj = new Date();
+    const dia = String(dataObj.getDate()).padStart(2, '0');
+    const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
+    const ano = dataObj.getFullYear();
+    const hojeFormatado = `${dia}/${mes}/${ano}`;
+
+    if (filtroPeriodo === 'hoje') {
+        // Verifica se p.data existe antes de chamar .includes para evitar travar
+        lista = lista.filter(p => p.data && p.data.includes(hojeFormatado));
+    }
     else if (filtroPeriodo === 'data' && dataSelecionada) {
-      const [ano, mes, dia] = dataSelecionada.split('-');
-      lista = lista.filter(p => p.data.includes(`${dia}/${mes}/${ano}`));
+      const [anoInput, mesInput, diaInput] = dataSelecionada.split('-');
+      const dataFiltro = `${diaInput}/${mesInput}/${anoInput}`;
+      lista = lista.filter(p => p.data && p.data.includes(dataFiltro));
     }
     return lista.reverse();
   };
+  // ---------------------
 
   const pedidosPendentes = pedidos.filter(p => p.status === 'Pendente');
   const historicoFiltrado = filtrarPedidosHistorico();
@@ -117,7 +126,6 @@ const Cozinha = () => {
             <div className="cupom-header">
                 <h2>NEY BURGUER</h2>
                 
-                {/* LÓGICA DE EXIBIÇÃO: SE FOR RETIRADA, MOSTRA GIGANTE */}
                 {pedidoParaImprimir.tipoEntrega === 'Retirada' ? (
                     <div style={{border: '3px solid black', padding: '5px', margin: '10px 0', fontSize: '18px', fontWeight: 'bold'}}>
                         RETIRADA / BALCÃO
@@ -135,7 +143,6 @@ const Cozinha = () => {
             <div className="cupom-cliente">
                 <p style={{fontSize: '16px'}}><strong>Cliente:</strong> {pedidoParaImprimir.cliente}</p>
                 
-                {/* SÓ MOSTRA ENDEREÇO SE NÃO FOR RETIRADA */}
                 {pedidoParaImprimir.tipoEntrega !== 'Retirada' && (
                     <>
                         <p><strong>Fone:</strong> {pedidoParaImprimir.telefone}</p>
@@ -167,7 +174,6 @@ const Cozinha = () => {
       <header className="cozinha-header no-print">
         <div className="titulo-logout">
             <h1>👨‍🍳 Gestão</h1>
-            {/* BOTÃO PARA IR PARA O BALCÃO */}
             <button className="btn-ir-balcao" onClick={() => navigate('/balcao')}>🖥️ Abrir PDV Balcão</button>
             <button onClick={handleLogout} className="btn-sair">Sair</button>
         </div>
@@ -190,10 +196,9 @@ const Cozinha = () => {
                   <div className="pedido-header">
                     <h3>#{pedido.id.slice(-4)}</h3> 
                     
-                    {/* ETIQUETA VISUAL NO CARD */}
                     {pedido.tipoEntrega === 'Retirada' ? 
                         <span className="tag-retirada">BALCÃO</span> : 
-                        <span className="hora-pedido">{pedido.data.split(' ')[1]}</span>
+                        <span className="hora-pedido">{pedido.data ? pedido.data.split(' ')[1] : '--:--'}</span>
                     }
                   </div>
                   
@@ -229,7 +234,6 @@ const Cozinha = () => {
         </div>
       )}
 
-      {/* HISTÓRICO MANTIDO IGUAL ... */}
       {abaAtiva === 'historico' && (
         <div className="tela-historico">
             <div className="filtros-box no-print">
@@ -251,7 +255,7 @@ const Cozinha = () => {
                     <tbody>
                         {historicoFiltrado.map(p => (
                             <tr key={p.id}>
-                                <td>{p.data.split(' ')[1]}</td>
+                                <td>{p.data ? p.data.split(' ')[1] : '-'}</td>
                                 <td>{p.tipoEntrega === 'Retirada' ? 'BALCÃO' : 'DELIVERY'}</td>
                                 <td>{p.cliente}</td>
                                 <td>R$ {p.total.toFixed(2)}</td>
