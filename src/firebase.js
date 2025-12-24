@@ -6,12 +6,12 @@ import { getFirestore } from "firebase/firestore";
 // Exemplo (Use os seus dados reais!):
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAEEAmcNViKtAoYaaZ5xA9lY3Mtib_BElU",
-  authDomain: "ney-burguer.firebaseapp.com",
-  projectId: "ney-burguer",
-  storageBucket: "ney-burguer.firebasestorage.app",
-  messagingSenderId: "113525098424",
-  appId: "1:113525098424:web:7637b8a8049d2b919fb14d"
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID
 };
 
 // Inicializa o Firebase
