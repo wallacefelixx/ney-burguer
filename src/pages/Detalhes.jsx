@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom'; // <--- ADICIONEI useLocation
 import { useCart } from '../contexts/CartContext';
-import { cardapio } from '../data/cardapio'; // <--- IMPORTA O CARDÁPIO CENTRAL
+import { cardapio } from '../data/cardapio'; 
 import './Detalhes.css';
 
 const Detalhes = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation(); // <--- Habilita receber dados da Home
   const { addToCart } = useCart(); 
 
   const [produto, setProduto] = useState(null);
   const [quantidade, setQuantidade] = useState(1);
   const [observacao, setObservacao] = useState('');
 
+  // Tenta pegar o preço promocional (se ele existir no "estado" da navegação)
+  const precoPromocional = location.state?.precoPromocional;
+
   useEffect(() => {
-    // Busca no arquivo central
     const itemEncontrado = cardapio.find(item => item.id === parseInt(id));
     if (itemEncontrado) {
       setProduto(itemEncontrado);
@@ -23,13 +26,17 @@ const Detalhes = () => {
     }
   }, [id, navigate]);
 
+  // Lógica principal: Se tiver desconto, usa ele. Se não, usa o original.
+  const precoFinal = (produto && precoPromocional) ? precoPromocional : (produto ? produto.preco : 0);
+
   const handleAdicionar = () => {
     if (!produto) return;
     const itemParaCarrinho = {
       ...produto,
+      preco: precoFinal, // <--- SALVA O PREÇO JÁ COM DESCONTO
       quantidade: quantidade,
       obs: observacao,
-      total: produto.preco * quantidade 
+      total: precoFinal * quantidade // <--- CALCULA O TOTAL COM O DESCONTO
     };
     addToCart(itemParaCarrinho);
     navigate('/carrinho');
@@ -43,13 +50,27 @@ const Detalhes = () => {
       
       <div className="detalhes-content">
         <div className="detalhes-img">
-            <img src={produto.img} alt={produto.nome} />
+            {/* Mantive suporte para os dois nomes de variável caso tenha mudado no cardapio */}
+            <img src={produto.imagem || produto.img} alt={produto.nome} />
         </div>
 
         <div className="detalhes-info">
             <h1>{produto.nome}</h1>
-            <p className="desc">{produto.desc}</p>
-            <h3 className="preco">R$ {produto.preco.toFixed(2)}</h3>
+            <p className="desc">{produto.descricao || produto.desc}</p>
+            
+            {/* SE TIVER PROMOÇÃO, MOSTRA O PREÇO DE/POR */}
+            {precoPromocional ? (
+                <div style={{ marginBottom: '15px' }}>
+                    <span style={{ textDecoration: 'line-through', color: '#999', fontSize: '1rem', marginRight: '10px' }}>
+                        R$ {produto.preco.toFixed(2)}
+                    </span>
+                    <span className="preco" style={{ color: '#25D366', fontSize: '1.8rem', fontWeight: 'bold' }}>
+                        R$ {precoPromocional.toFixed(2)}
+                    </span>
+                </div>
+            ) : (
+                <h3 className="preco">R$ {produto.preco.toFixed(2)}</h3>
+            )}
 
             <div className="observacoes">
                 <label>Alguma observação?</label>
@@ -66,8 +87,9 @@ const Detalhes = () => {
                     <span>{quantidade}</span>
                     <button onClick={() => setQuantidade(q => q + 1)}>+</button>
                 </div>
+                {/* O botão agora mostra e calcula com o preço final correto */}
                 <button className="btn-add-carrinho" onClick={handleAdicionar}>
-                    Adicionar • R$ {(produto.preco * quantidade).toFixed(2)}
+                    Adicionar • R$ {(precoFinal * quantidade).toFixed(2)}
                 </button>
             </div>
         </div>
